@@ -7,6 +7,9 @@ import type { AppProps } from 'next/app'
 import { PieChartOutlined } from '@ant-design/icons';
 import { primaryColor } from '../utils/constant';
 import React from 'react';
+import Image from 'next/image';
+import Logo from '../public/images/logo_color.png';
+import MyBreadcrum from '../components/reusable/breadcrumb';
 const { Content, Footer, Header, Sider } = Layout;
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -37,9 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 		getItem('3', 'Halaman 1', <PieChartOutlined />),
 		getItem('4', 'Halaman 1', <PieChartOutlined />, [
 			getItem('5', 'Sub Menu'),
-			getItem('5', 'Sub Menu'),
-			getItem('5', 'Sub Menu'),
-			getItem('5', 'Sub Menu'),
+			getItem('6', 'Sub Menu'),
 		]),
 	];
 
@@ -56,7 +57,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 					console.log(collapsed, type);
 				}}
 			>
-				<div className="h-16 bg-primary" />
+				<div className="relative h-16 flex justify-center items-center" >
+					<Image alt='Failed load image...' src={Logo} height={100} width={100} />
+				</div>
 				<Menu
 					theme="light"
 					mode="inline"
@@ -72,7 +75,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 						className="flex justify-end"
 					/>
 				</Header>
-				<Content className='p-5'>
+				<Content className='py-12 p-2 md:p-5'>
+					<MyBreadcrum />
 					<Component {...pageProps} />
 				</Content>
 				<Footer className='text-center text-white bg-primary'>Ant Design ©2018 Created by Ant UED</Footer>
