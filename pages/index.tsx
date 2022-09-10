@@ -1,28 +1,17 @@
-import { PrismaClient } from "@prisma/client"
-import { DatePicker } from "antd"
-import { GetServerSideProps } from "next"
+import { Breadcrumb, Button, Card, DatePicker } from "antd"
 
 const HomePage = () => {
 	return <>
-		<DatePicker />
+		<Breadcrumb className="mb-5">
+			<Breadcrumb.Item>User</Breadcrumb.Item>
+			<Breadcrumb.Item>Bill</Breadcrumb.Item>
+		</Breadcrumb>
+		<Card>
+			<p>sss</p>
+			<p>sss</p>
+			<p>sss</p>
+		</Card>
 	</>
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-	const prisma = new PrismaClient();
-	const users = await prisma.user.findMany({
-		include: {
-			posts: true,
-			_count: {
-				select: { posts: true }
-			}
-		}
-	});
-
-	console.log({ users: users, message: "Message ini loh" });
-	await prisma.$disconnect();
-	return {
-		props: {}
-	}
-}
 export default HomePage
