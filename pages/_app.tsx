@@ -35,13 +35,22 @@ function MyApp({ Component, pageProps }: AppProps) {
 	}
 
 	const sideItems = [
-		getItem('1', 'Halaman 1', <PieChartOutlined />),
-		getItem('2', 'Halaman 1', <PieChartOutlined />),
-		getItem('3', 'Halaman 1', <PieChartOutlined />),
-		getItem('4', 'Halaman 1', <PieChartOutlined />, [
-			getItem('5', 'Sub Menu'),
-			getItem('6', 'Sub Menu'),
+		getItem('1', 'Management User', <PieChartOutlined />),
+		getItem('2', 'Management Group User', <PieChartOutlined />),
+		getItem('3', 'Modul', <PieChartOutlined />),
+		getItem('4', 'Menu', <PieChartOutlined />),
+		getItem('5', 'Master Kategori', <PieChartOutlined />),
+		getItem('6', 'Master Data', <PieChartOutlined />),
+		getItem('7', 'Parent Menu', <PieChartOutlined />, [
+			getItem('7.1', 'Child 1'),
+			getItem('7.2', 'Child 2'),
 		]),
+	];
+
+	const headerItems = [
+		getItem('1', 'Setting', <PieChartOutlined />),
+		getItem('2', 'Lain', <PieChartOutlined />),
+		getItem('3', 'Modul Lainnya', <PieChartOutlined />),
 	];
 
 	return <ConfigProvider>
@@ -71,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					<Menu
 						theme="light"
 						mode="horizontal"
-						items={sideItems}
+						items={headerItems}
 						className="flex justify-end"
 					/>
 				</Header>
