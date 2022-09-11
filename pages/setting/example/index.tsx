@@ -129,7 +129,7 @@ const ExamplePage = () => {
 		<div className="flex flex-col">
 			<div className="flex justify-between items-center mb-5">
 				<h1 className="font-medium text-base mr-5 md:text-xl">Example</h1>
-				<Space>
+				<Space wrap>
 					<ButtonWithIcon title="Import" icon={<ImportOutlined />} className="bg-accent text-white" />
 					<ButtonWithIcon title="Export" icon={<ExportOutlined />} className="bg-info text-white" />
 					<ButtonWithIcon title="Halaman" icon={<PlusOutlined />} className="bg-success text-white" />
