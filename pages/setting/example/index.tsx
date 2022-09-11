@@ -13,7 +13,7 @@ const ExamplePage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	/// Key & Index harus sama dengan [Interface property name]
-	/// Jika tidak sama, text tidak akan muncul		
+	/// Jika tidak sama, text tidak akan muncul.
 	const columns: TableColumnsType<any> = [
 		{
 			key: "no",
