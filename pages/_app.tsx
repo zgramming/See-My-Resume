@@ -1,4 +1,5 @@
 import 'antd/dist/antd.variable.min.css';
+
 import '../styles/globals.css';
 
 import { ConfigProvider, Layout, Menu, MenuProps } from 'antd';
