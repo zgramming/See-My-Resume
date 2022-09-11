@@ -14,6 +14,7 @@ const ExamplePage = () => {
 
 	/// Key & Index harus sama dengan [Interface property name]
 	/// Jika tidak sama, text tidak akan muncul.
+	/// Adding Comment
 	const columns: TableColumnsType<any> = [
 		{
 			key: "no",
