@@ -25,7 +25,4 @@ module.exports = {
     },
   },
   plugins: [],
-  corePlugins: {
-    preflight: false, // For solving conflic ant design & tailwind css
-  },
 };

@@ -1,16 +1,17 @@
 import 'antd/dist/antd.variable.min.css';
-
 import '../styles/globals.css';
 
 import { ConfigProvider, Layout, Menu, MenuProps } from 'antd';
+import Image from 'next/image';
+import React from 'react';
+
+import { PieChartOutlined } from '@ant-design/icons';
+
+import MyBreadcrum from '../components/reusable/breadcrumb';
+import Logo from '../public/images/logo_color.png';
+import { primaryColor } from '../utils/constant';
 
 import type { AppProps } from 'next/app'
-import { PieChartOutlined } from '@ant-design/icons';
-import { primaryColor } from '../utils/constant';
-import React from 'react';
-import Image from 'next/image';
-import Logo from '../public/images/logo_color.png';
-import MyBreadcrum from '../components/reusable/breadcrumb';
 const { Content, Footer, Header, Sider } = Layout;
 
 function MyApp({ Component, pageProps }: AppProps) {
