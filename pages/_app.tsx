@@ -37,7 +37,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 		},
 	});
 
-
 	const headerItems = [
 		getItem('/setting', 'Setting', <PieChartOutlined />),
 	];
@@ -127,6 +126,5 @@ const SiderMenu = () => {
 		}}
 	/>
 }
-
 
 export default MyApp
