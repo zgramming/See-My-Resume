@@ -12,9 +12,12 @@ import Logo from '../public/images/logo_color.png';
 import { primaryColor } from '../utils/constant';
 
 import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router';
 const { Content, Footer, Header, Sider } = Layout;
 
 function MyApp({ Component, pageProps }: AppProps) {
+	const router = useRouter()
+
 	ConfigProvider.config({
 		theme: {
 			primaryColor: primaryColor,
@@ -37,22 +40,24 @@ function MyApp({ Component, pageProps }: AppProps) {
 	}
 
 	const sideItems = [
-		getItem('1', 'Management User', <PieChartOutlined />),
-		getItem('2', 'Management Group User', <PieChartOutlined />),
-		getItem('3', 'Modul', <PieChartOutlined />),
-		getItem('4', 'Menu', <PieChartOutlined />),
-		getItem('5', 'Master Kategori', <PieChartOutlined />),
-		getItem('6', 'Master Data', <PieChartOutlined />),
-		getItem('7', 'Parent Menu', <PieChartOutlined />, [
-			getItem('7.1', 'Child 1'),
-			getItem('7.2', 'Child 2'),
-		]),
+		getItem('/setting/user', 'Management User', <PieChartOutlined />),
+		getItem('/setting/user_group', 'Management Group User', <PieChartOutlined />),
+		getItem('/setting/modul', 'Modul', <PieChartOutlined />),
+		getItem('/setting/menu', 'Menu', <PieChartOutlined />),
+		getItem('/setting/access_modul', 'Access Modul', <PieChartOutlined />),
+		getItem('/setting/access_menu', 'Access Menu', <PieChartOutlined />),
+		getItem('/setting/master_category', 'Master Kategori', <PieChartOutlined />),
+		getItem('/setting/master_data', 'Master Data', <PieChartOutlined />),
+		getItem('/setting/example', 'Dokumentasi', <PieChartOutlined />),
+		getItem('/setting/parameter', 'Parameter', <PieChartOutlined />),
+		// getItem('7', 'Parent Menu', <PieChartOutlined />, [
+		// 	getItem('7.1', 'Child 1'),
+		// 	getItem('7.2', 'Child 2'),
+		// ]),
 	];
 
 	const headerItems = [
-		getItem('1', 'Setting', <PieChartOutlined />),
-		getItem('2', 'Lain', <PieChartOutlined />),
-		getItem('3', 'Modul Lainnya', <PieChartOutlined />),
+		getItem('/setting', 'Setting', <PieChartOutlined />),
 	];
 
 	return <ConfigProvider>
@@ -75,6 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 					theme="light"
 					mode="inline"
 					items={sideItems}
+					onClick={(e) => router.push(e.key)}
 				/>
 			</Sider>
 			<Layout>

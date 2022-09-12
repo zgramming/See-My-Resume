@@ -8,9 +8,23 @@ import {
 } from '@ant-design/icons';
 
 import { ButtonWithIcon } from '../../../components/reusable/button_with_icon';
+import { sleep } from '../../../utils/function';
 
 const ExamplePage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const deleteHandler = async () => {
+		Modal.confirm({
+			title: "Are you sure delete this row ?",
+			maskClosable: false,
+			onOk: async () => {
+				await sleep(5000);
+			},
+			onCancel: async () => {
+				alert('cancel');
+			}
+		});
+	}
 
 	/// Key & Index harus sama dengan [Interface property name]
 	/// Jika tidak sama, text tidak akan muncul.
@@ -118,8 +132,8 @@ const ExamplePage = () => {
 			action: <>
 				<Space>
 					<ButtonWithIcon title="Edit Halaman" icon={<EditOutlined />} className="bg-info	text-white" />
-					<ButtonWithIcon title="Edit Modal" icon={<EditOutlined />} className="bg-info text-white" />
-					<ButtonWithIcon title="Delete" icon={<DeleteOutlined />} className="bg-error text-white" />
+					<ButtonWithIcon title="Edit Modal" icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
+					<ButtonWithIcon title="Delete" icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
 					<ButtonWithIcon title="Preview" icon={<SearchOutlined />} className="bg-white text-black" />
 				</Space>
 			</>

@@ -9,7 +9,6 @@ const useIsMobile = () => {
 		})
 	}
 	useEffect(() => {
-		setIsMobile(window.innerWidth <= mobileBreakpoint)
 		window.addEventListener('resize', setWidthHandler)
 		return () => {
 			window.removeEventListener('resize', setWidthHandler)
