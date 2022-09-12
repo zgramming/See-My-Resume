@@ -9,7 +9,7 @@ const MyBreadcrum = () => {
 
 		/// Route => user_group become User Group
 		if (split.length > 1) {
-			const capitalizeName = split.map(val => val[0].toUpperCase() + val.slice(1))
+			const capitalizeName = split.map(val => (val[0]?.toUpperCase() ?? "default") + val.slice(1))
 			return capitalizeName.join(' ');
 		}
 
@@ -17,7 +17,7 @@ const MyBreadcrum = () => {
 	});
 	return <>
 		<Breadcrumb separator=">" className="mb-5">
-			{arrPath.map(val => <Breadcrumb.Item key={val} >{val[0].toUpperCase() + val.slice(1)}</Breadcrumb.Item>)}
+			{arrPath.map(val => <Breadcrumb.Item key={val} >{(val[0]?.toUpperCase() ?? "default") + val.slice(1)}</Breadcrumb.Item>)}
 		</Breadcrumb>
 	</>
 }
