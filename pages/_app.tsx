@@ -1,33 +1,19 @@
 import 'antd/dist/antd.variable.min.css';
 import '../styles/globals.css';
 
-import { ConfigProvider, Layout, Menu, MenuProps } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { PieChartOutlined } from '@ant-design/icons';
-
+import HeaderMenu from '../components/layout/header_menu';
+import SiderMenu from '../components/layout/sider_menu';
 import MyBreadcrum from '../components/reusable/breadcrumb';
 import Logo from '../public/images/logo_color.png';
 import { primaryColor } from '../utils/constant';
 
 import type { AppProps } from 'next/app'
-import { useRouter } from 'next/router';
-const { Content, Footer, Header, Sider } = Layout;
-
-type MenuItem = Required<MenuProps>['items'][number];
-const getItem = (
-	key: React.Key,
-	label: React.ReactNode,
-	icon?: React.ReactNode,
-	children?: MenuItem[]) => {
-	return {
-		key,
-		icon,
-		children,
-		label,
-	} as MenuItem;
-}
+import Link from 'next/link';
+const { Content, Footer, Sider } = Layout;
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -36,10 +22,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 			primaryColor: primaryColor,
 		},
 	});
-
-	const headerItems = [
-		getItem('/setting', 'Setting', <PieChartOutlined />),
-	];
 
 	return <ConfigProvider>
 		<Layout className='min-h-screen'>
@@ -55,19 +37,14 @@ function MyApp({ Component, pageProps }: AppProps) {
 				}}
 			>
 				<div className="relative h-16 flex justify-center items-center" >
-					<Image alt='Failed load image...' src={Logo} height={100} width={100} />
+					<Link href={"/"}>
+						<a><Image alt='Failed load image...' src={Logo} height={100} width={100} /></a>
+					</Link>
 				</div>
 				<SiderMenu />
 			</Sider>
 			<Layout>
-				<Header className='bg-white'>
-					<Menu
-						theme="light"
-						mode="horizontal"
-						items={headerItems}
-						className="flex justify-end"
-					/>
-				</Header>
+				<HeaderMenu />
 				<Content className='py-12 p-2 md:p-5'>
 					<MyBreadcrum />
 					<Component {...pageProps} />
@@ -79,60 +56,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 }
 
-const SiderMenu = () => {
-
-	const router = useRouter();
-
-	const currentPathHandler = (path: string): string => {
-		const [first, second, third] = path.split('/').filter(route => route.length !== 0);
-
-		/// We assume when `third` is undefined, this is sub menu
-		return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
-	}
-
-	const [currentPath, setCurrentPath] = useState(currentPathHandler(router.pathname));
-
-	const sideItems = [
-		getItem('/setting/user_group', 'Management Group User', <PieChartOutlined />),
-		getItem('/setting/user', 'Management User', <PieChartOutlined />),
-		getItem('/setting/modul', 'Modul', <PieChartOutlined />),
-		getItem('/setting/menu', 'Menu', <PieChartOutlined />),
-		getItem('/setting/access_modul', 'Access Modul', <PieChartOutlined />),
-		getItem('/setting/access_menu', 'Access Menu', <PieChartOutlined />),
-		getItem('/setting/master_category', 'Master Kategori', <PieChartOutlined />),
-		getItem('/setting/master_data', 'Master Data', <PieChartOutlined />),
-		getItem('/setting/example', 'Dokumentasi', <PieChartOutlined />),
-		getItem('/setting/parameter', 'Parameter', <PieChartOutlined />),
-		getItem('?/setting/parent', 'Parent Menu', <PieChartOutlined />, [
-			getItem('/setting/parent/child_first', 'Child 1'),
-			getItem('/setting/parent/child_second', 'Child 2'),
-		]),
-	];
-
-	/// Listen every change route path name
-	useEffect(() => {
-		const path = currentPathHandler(router.pathname);
-		setCurrentPath(path);
-		return () => {
-		}
-	}, [router.pathname])
-
-	return <Menu
-		theme="light"
-		mode="inline"
-		items={sideItems}
-		selectedKeys={[currentPath]}
-		onClick={(e) => {
-
-			/// Jangan lakukan push jika character pertama === "?"
-			/// Ini dilakukan untuk meng-akomodir sub menu
-			if (e.key[0] === "?") return false;
-
-			const path = currentPathHandler(e.key);
-			setCurrentPath(path);
-			router.push(path);
-		}}
-	/>
-}
 
 export default MyApp

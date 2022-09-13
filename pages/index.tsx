@@ -1,17 +1,7 @@
-import { Breadcrumb, Button, Card, DatePicker } from "antd"
-
 const HomePage = () => {
-	return <>
-		<Breadcrumb className="mb-5">
-			<Breadcrumb.Item>User</Breadcrumb.Item>
-			<Breadcrumb.Item>Bill</Breadcrumb.Item>
-		</Breadcrumb>
-		<Card>
-			<p>sss</p>
-			<p>sss</p>
-			<p>sss</p>
-		</Card>
-	</>
+	return <div className="flex flex-col justify-center items-center">
+		<h1 className="text-9xl">Zeffry Ganteng</h1>
+	</div>
 }
 
 export default HomePage
