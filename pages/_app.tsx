@@ -3,7 +3,7 @@ import '../styles/globals.css';
 
 import { ConfigProvider, Layout, Menu, MenuProps } from 'antd';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { PieChartOutlined } from '@ant-design/icons';
 
@@ -93,8 +93,8 @@ const SiderMenu = () => {
 	const [currentPath, setCurrentPath] = useState(currentPathHandler(router.pathname));
 
 	const sideItems = [
-		getItem('/setting/user', 'Management User', <PieChartOutlined />),
 		getItem('/setting/user_group', 'Management Group User', <PieChartOutlined />),
+		getItem('/setting/user', 'Management User', <PieChartOutlined />),
 		getItem('/setting/modul', 'Modul', <PieChartOutlined />),
 		getItem('/setting/menu', 'Menu', <PieChartOutlined />),
 		getItem('/setting/access_modul', 'Access Modul', <PieChartOutlined />),
@@ -108,6 +108,14 @@ const SiderMenu = () => {
 			getItem('/setting/parent/child_second', 'Child 2'),
 		]),
 	];
+
+	/// Listen every change route path name
+	useEffect(() => {
+		const path = currentPathHandler(router.pathname);
+		setCurrentPath(path);
+		return () => {
+		}
+	}, [router.pathname])
 
 	return <Menu
 		theme="light"

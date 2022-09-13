@@ -1,142 +1,167 @@
-import { Button, Card, Select, Table } from 'antd';
+import {
+	Button, Card, Form, Input, Modal, Radio, Select, Space, Table, TableColumnsType
+} from 'antd';
 import Search from 'antd/lib/input/Search';
-import { ColumnsType } from 'antd/lib/table';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
-import { DownloadOutlined, ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons';
-import useIsMobile from '../../../hooks/use_ismobile_hooks';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
-const { Option } = Select;
+import { sleep } from '../../../utils/function';
 
-interface DataType {
-	key: React.Key;
-	name: string;
-	age: number;
-	address: string;
-	action: React.ReactNode,
+interface DataSourceInterface {
+	no: ReactNode,
+	group_user: ReactNode,
+	username: ReactNode,
+	name: ReactNode,
+	status: ReactNode,
+	created_at: ReactNode,
+	updated_at: ReactNode,
+	action: ReactNode,
 }
-
 const UserPage = () => {
-	const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		const intervalId = setTimeout(() => {
-			setIsLoading(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
-			console.log("tick interval")
-		}, 5000)
+	const deleteHandler = async () => {
+		Modal.confirm({
+			title: "Are you sure delete this row ?",
+			maskClosable: false,
+			onOk: async () => {
+				await sleep(5000);
+			},
+			onCancel: async () => {
+				alert('cancel');
+			}
+		});
+	}
 
-		return () => {
-			clearTimeout(intervalId)
-		};
-	}, [])
-
-	const columns: ColumnsType<DataType> = [
-		{
-			key: 'name',
-			dataIndex: 'name',
-			title: 'Name (all screens)',
-			render: text => <a>{text}</a>,
-		},
-		{
-			key: 'age',
-			dataIndex: 'age',
-			title: 'Age (medium screen or bigger)',
-			sorter: (a, b) => a.age - b.age,
-		},
-		{
-			key: 'address',
-			dataIndex: 'address',
-			title: 'Address (large screen or bigger)',
-		},
-		{
-			key: 'action',
-			dataIndex: 'action',
-			title: 'Action',
-		},
+	const columns: TableColumnsType<DataSourceInterface> = [
+		{ key: "no", dataIndex: "no", title: "No" },
+		{ key: "group_user", dataIndex: "group_user", title: "Group User" },
+		{ key: "username", dataIndex: "username", title: "Username" },
+		{ key: "name", dataIndex: "name", title: "Nama" },
+		{ key: "status", dataIndex: "status", title: "Status" },
+		{ key: "created_at", dataIndex: "created_at", title: "Created At" },
+		{ key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },
+		{ key: "action", dataIndex: "action", title: "Aksi", width: 100 },
 	];
 
-	const data: DataType[] = [
+	let dataSource: DataSourceInterface[] = [
 		{
-			key: '1',
-			name: 'John Brown',
-			age: 32,
-			address: 'New York No. 1 Lake Park',
-			action: <span>Testing</span>
-		},
-		{
-			key: '2',
-			name: 'ZEFFRY Brown',
-			age: 40,
-			address: 'New York No. 1 Lake Park',
-			action: <span>Testing</span>
-
-		},
+			no: 1,
+			group_user: "Superadmin",
+			username: "zeffry",
+			name: "Zeffry Reynando",
+			status: "Aktif",
+			created_at: new Date().toDateString(),
+			updated_at: new Date().toDateString(),
+			action: <Space align="center">
+				<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
+				<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
+			</Space>
+		}
 	];
 
-	const children: React.ReactNode[] = [
-		<Option key={0} value="">Pilih</Option>
-	];
-
-	for (let i = 10; i < 36; i++) children.push(<Option key={i.toString(36) + i} value={i}>{i.toString(36) + i}</Option>);
-
-	return <Card
-
-	>
+	return <Card>
 		<div className="flex flex-col">
 			<div className="flex justify-between items-center mb-5">
-				<h1 className="font-medium text-base mr-5 md:text-xl">Management User</h1>
-				<div className="flex flex-wrap gap-2">
-					<Button type="ghost" shape="round" className="bg-accent text-white" >
-						<div className="flex justify-center items-center space-x-1">
-							<ImportOutlined />
-							<span>Import</span>
-						</div>
-					</Button>
-					<Button type="ghost" shape="round" className="bg-info text-white" >
-						<div className="flex justify-center items-center space-x-1">
-							<ExportOutlined />
-							<span>Export</span>
-						</div>
-					</Button>
-					<Button type="ghost" shape="round" className="bg-success text-white" >
-						<div className="flex justify-center items-center space-x-1">
-							<PlusOutlined />
-							<span>Halaman</span>
-						</div>
-					</Button>
-					<Button type="ghost" shape="round" className="bg-success text-white" >
-						<div className="flex justify-center items-center space-x-1">
-							<PlusOutlined />
-							<span>Modal</span>
-						</div>
-					</Button>
-				</div>
+				<h1 className="font-medium text-base mr-5 md:text-xl">User</h1>
+				<Space wrap>
+					<Button icon={<PlusOutlined />} className="bg-success text-white" onClick={() => setIsModalOpen(true)} >Tambah</Button>
+				</Space>
 			</div>
 			<div className="flex flex-wrap items-center space-x-2 mb-5">
 				<Search placeholder="Cari sesuatu..." onSearch={(e) => ''} className="w-48" allowClear />
-
 				<Select
 					defaultValue={{
 						value: 0,
 						label: "Pilih"
 					}}
-					onChange={(e, option) => ''}
+					onChange={(e) => alert(e)}
 					className="w-auto md:min-w-[10rem]"  >
-					{children}
+					<Select.Option value={0}>Pilih</Select.Option>
+					<Select.Option value='active'>Aktif</Select.Option>
+					<Select.Option value="not_active">Tidak Aktif</Select.Option>
 				</Select>
 			</div>
 			<Table
-				loading={isLoading}
+				loading={false}
 				columns={columns}
-				dataSource={data}
+				dataSource={dataSource}
 				pagination={{ position: ['bottomRight'] }}
-				scroll={{ x: 1000 }}
+				scroll={{ x: 2000 }}
 			/>
+			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 		</div>
-	</Card>
+	</Card >;
 }
 
-const ButtonAction = () => { }
+const FormModal = (props: {
+	open: boolean, onCloseModal: () => void
+}) => {
+	const [form] = Form.useForm();
+
+	const onFinish = (values: any) => {
+		console.log(values);
+	};
+
+	useEffect(() => {
+		form.setFieldsValue({
+			group_user: 0,
+			status: "active"
+		})
+
+		return () => {
+		}
+	}, [form])
+
+
+	return <Modal
+		title="Form Tambah"
+		open={props.open}
+		maskClosable={false}
+		width="1000px"
+		onCancel={props.onCloseModal}
+		footer={
+			<Space>
+				<Button onClick={props.onCloseModal} >Batal</Button>
+				<Button htmlType="submit" form="form_validation" className='bg-success text-white' onClick={() => alert('save!')} >Simpan</Button>
+			</Space>
+		}
+	>
+		<Form
+			form={form}
+			name="form_validation"
+			id="form_validation"
+			layout="vertical"
+			onFinish={onFinish}
+		>
+			<Form.Item label="Group User" name="group_user">
+				<Select>
+					<Select.Option value={0}>Pilih</Select.Option>
+					<Select.Option value="superadmin">Superadmin</Select.Option>
+				</Select>
+			</Form.Item>
+			<Form.Item label="Nama" name="name" >
+				<Input placeholder="Input Name" />
+			</Form.Item>
+			<Form.Item label="Email" name="email" >
+				<Input placeholder="Input email" type='email' />
+			</Form.Item>
+			<Form.Item label="Username" name="username" >
+				<Input placeholder="Input username" />
+			</Form.Item>
+			<Form.Item label="Password" name="password" >
+				<Input placeholder="Input password" type='password' />
+			</Form.Item>
+			<Form.Item label="Status" name="status">
+				<Radio.Group>
+					<Radio value={'active'}>Aktif</Radio>
+					<Radio value={'not_active'}>Tidak Aktif</Radio>
+				</Radio.Group>
+			</Form.Item>
+		</Form>
+	</Modal>;
+}
 
 export default UserPage;

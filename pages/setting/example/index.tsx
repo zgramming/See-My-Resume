@@ -1,14 +1,34 @@
-import { Button, Checkbox, Col, DatePicker, Form, Input, InputNumber, Modal, Radio, Row, Select, Space, Table, TableColumnsType, Upload } from 'antd';
+import {
+	Button, Checkbox, DatePicker, Form, Input, InputNumber, Modal, Radio, Select, Space, Table,
+	TableColumnsType, Upload
+} from 'antd';
 import Card from 'antd/lib/card/Card';
 import Search from 'antd/lib/input/Search';
 import { useState } from 'react';
 
 import {
-	DeleteOutlined, EditOutlined, ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined, UploadOutlined
+	DeleteOutlined, EditOutlined, ExportOutlined, ImportOutlined, PlusOutlined, SearchOutlined,
+	UploadOutlined
 } from '@ant-design/icons';
 
-import { ButtonWithIcon } from '../../../components/reusable/button_with_icon';
 import { sleep } from '../../../utils/function';
+import TextArea from 'antd/lib/input/TextArea';
+
+interface DataSourceInterface {
+	no: React.ReactNode,
+	name: React.ReactNode,
+	code: React.ReactNode,
+	job: React.ReactNode,
+	birth_date: React.ReactNode,
+	money: React.ReactNode,
+	hobby: React.ReactNode,
+	status: React.ReactNode,
+	image?: React.ReactNode,
+	file?: React.ReactNode,
+	created_at: React.ReactNode,
+	updated_at: React.ReactNode,
+	action: React.ReactNode,
+}
 
 const ExamplePage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,90 +50,22 @@ const ExamplePage = () => {
 	/// Jika tidak sama, text tidak akan muncul.
 	/// Adding Comment
 	const columns: TableColumnsType<any> = [
-		{
-			key: "no",
-			dataIndex: "no",
-			title: "No"
-		},
-		{
-			key: "name",
-			dataIndex: "name",
-			title: "Name (Input Text)"
-		},
-		{
-			key: "code",
-			dataIndex: "code",
-			title: "Code (Input Text)"
-		},
-		{
-			key: "job",
-			dataIndex: "job",
-			title: "Job (Input Select)"
-		},
-		{
-			key: "birth_date",
-			dataIndex: "birth_date",
-			title: "Birth Date (Input Date)"
-		},
-		{
-			key: "money",
-			dataIndex: "money",
-			title: "Money (Input Number)"
-		},
-		{
-			key: "hobby",
-			dataIndex: "hobby",
-			title: "Hobby (Checkbox)"
-		},
-		{
-			key: "status",
-			dataIndex: "status",
-			title: "Status (Radio Button)"
-		},
-		{
-			key: "image",
-			dataIndex: "image",
-			title: "Image (Show Image)"
-		},
-		{
-			key: "file",
-			dataIndex: "file",
-			title: "File (Show File)"
-		},
-		{
-			key: "created_at",
-			dataIndex: "created_at",
-			title: "Created At (DateTime)"
-		},
-		{
-			key: "updated_at",
-			dataIndex: "updated_at",
-			title: "Updated At (DateTime)"
-		},
-		{
-			key: "action",
-			dataIndex: "action",
-			title: "Action (Custom Button)"
-		},
+		{ key: "no", dataIndex: "no", title: "No" },
+		{ key: "name", dataIndex: "name", title: "Name (Input Text)" },
+		{ key: "code", dataIndex: "code", title: "Code (Input Text)" },
+		{ key: "job", dataIndex: "job", title: "Job (Input Select)" },
+		{ key: "birth_date", dataIndex: "birth_date", title: "Birth Date (Input Date)" },
+		{ key: "money", dataIndex: "money", title: "Money (Input Number)" },
+		{ key: "hobby", dataIndex: "hobby", title: "Hobby (Checkbox)" },
+		{ key: "status", dataIndex: "status", title: "Status (Radio Button)" },
+		{ key: "image", dataIndex: "image", title: "Image (Show Image)" },
+		{ key: "file", dataIndex: "file", title: "File (Show File)" },
+		{ key: "created_at", dataIndex: "created_at", title: "Created At (DateTime)" },
+		{ key: "updated_at", dataIndex: "updated_at", title: "Updated At (DateTime)" },
+		{ key: "action", dataIndex: "action", title: "Action (Custom Button)" },
 	];
 
-	interface dataSourceInterface {
-		no: React.ReactNode,
-		name: React.ReactNode,
-		code: React.ReactNode,
-		job: React.ReactNode,
-		birth_date: React.ReactNode,
-		money: React.ReactNode,
-		hobby: React.ReactNode,
-		status: React.ReactNode,
-		image?: React.ReactNode,
-		file?: React.ReactNode,
-		created_at: React.ReactNode,
-		updated_at: React.ReactNode,
-		action: React.ReactNode,
-	}
-
-	let dataSource: dataSourceInterface[] = [];
+	let dataSource: DataSourceInterface[] = [];
 	for (let i = 0; i <= 10; i++) dataSource = [
 		...dataSource,
 		{
@@ -131,10 +83,10 @@ const ExamplePage = () => {
 			updated_at: `Updated At ${i}`,
 			action: <>
 				<Space>
-					<ButtonWithIcon title="Edit Halaman" icon={<EditOutlined />} className="bg-info	text-white" />
-					<ButtonWithIcon title="Edit Modal" icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
-					<ButtonWithIcon title="Delete" icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
-					<ButtonWithIcon title="Preview" icon={<SearchOutlined />} className="bg-white text-black" />
+					<Button icon={<EditOutlined />} className="bg-info	text-white" >Edit Halaman</Button>
+					<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} >Edit Modal</Button>
+					<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} >Delete</Button>
+					<Button icon={<SearchOutlined />} className="bg-white text-black" >Preview</Button>
 				</Space>
 			</>
 		}
@@ -145,10 +97,10 @@ const ExamplePage = () => {
 			<div className="flex justify-between items-center mb-5">
 				<h1 className="font-medium text-base mr-5 md:text-xl">Example</h1>
 				<Space wrap>
-					<ButtonWithIcon title="Import" icon={<ImportOutlined />} className="bg-accent text-white" />
-					<ButtonWithIcon title="Export" icon={<ExportOutlined />} className="bg-info text-white" />
-					<ButtonWithIcon title="Halaman" icon={<PlusOutlined />} className="bg-success text-white" />
-					<ButtonWithIcon title="Modal" icon={<PlusOutlined />} className="bg-success text-white" onClick={() => setIsModalOpen(true)} />
+					<Button icon={<ImportOutlined />} className="bg-accent text-white" >Import</Button>
+					<Button icon={<ExportOutlined />} className="bg-info text-white" >Export</Button>
+					<Button icon={<PlusOutlined />} className="bg-success text-white" >Halaman</Button>
+					<Button icon={<PlusOutlined />} className="bg-success text-white" onClick={() => setIsModalOpen(true)} >Modal</Button>
 				</Space>
 			</div>
 			<div className="flex flex-wrap items-center space-x-2 mb-5">
@@ -173,7 +125,7 @@ const ExamplePage = () => {
 				pagination={{ position: ['bottomRight'] }}
 				scroll={{ x: 2000 }}
 			/>
-			<FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />
+			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 
 		</div>
 	</Card>
@@ -197,17 +149,18 @@ const FormModal = (props: {
 		onCancel={props.onCloseModal}
 		footer={
 			<Space>
-				<ButtonWithIcon title="Batal" onClick={props.onCloseModal} />
-				<ButtonWithIcon title="Simpan" className='bg-success text-white' />
+				<Button title="Batal" onClick={props.onCloseModal} >Batal</Button>
+				<Button htmlType='submit' form='form_validation' title="Simpan" className='bg-success text-white' >Simpan</Button>
 			</Space>
 		} >
 		<Form
 			form={form}
 			name="form_validation"
+			id='form_validation'
 			layout="vertical"
 			onFinish={onFinish}
 		>
-			<Form.Item label="Name" name="name" >
+			<Form.Item label="Name" name="name"  >
 				<Input name='name' placeholder="Input Name..." />
 			</Form.Item>
 			<Form.Item label="Code" name="code" >
@@ -227,6 +180,9 @@ const FormModal = (props: {
 			</Form.Item>
 			<Form.Item label="Money" name="money">
 				<InputNumber className='w-full' />
+			</Form.Item>
+			<Form.Item label="Deskripsi" name="description">
+				<TextArea rows={4} />
 			</Form.Item>
 			<Form.Item name="hobby" label="Hobby">
 				<Checkbox.Group>
