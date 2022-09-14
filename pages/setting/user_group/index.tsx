@@ -59,39 +59,41 @@ const GroupUserPage = () => {
 		}
 	];
 
-	return <Card>
-		<div className="flex flex-col">
-			<div className="flex justify-between items-center mb-5">
-				<h1 className="font-medium text-base mr-5 md:text-xl">User Group</h1>
-				<Space wrap>
-					<Button icon={<PlusOutlined />} className="bg-success text-white" onClick={() => setIsModalOpen(true)} >Tambah</Button>
-				</Space>
-			</div>
-			<div className="flex flex-wrap items-center space-x-2 mb-5">
-				<Search placeholder="Cari sesuatu..." onSearch={(e) => ''} className="w-48" allowClear />
-				<Select
-					defaultValue={{
-						value: 0,
-						label: "Pilih"
-					}}
-					onChange={(e) => alert(e)}
-					className="w-auto md:min-w-[10rem]"  >
-					<Select.Option value={0}>Pilih</Select.Option>
-					<Select.Option value='active'>Aktif</Select.Option>
-					<Select.Option value="not_active">Tidak Aktif</Select.Option>
-				</Select>
-			</div>
-			<Table
-				loading={false}
-				columns={columns}
-				dataSource={dataSource}
-				pagination={{ position: ['bottomRight'] }}
-				scroll={{ x: 2000 }}
-			/>
-			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
+	return <>
+		<Card>
+			<div className="flex flex-col">
+				<div className="flex justify-between items-center mb-5">
+					<h1 className="font-medium text-base mr-5 md:text-xl">User Group</h1>
+					<Space wrap>
+						<Button icon={<PlusOutlined />} className="bg-success text-white" onClick={() => setIsModalOpen(true)} >Tambah</Button>
+					</Space>
+				</div>
+				<div className="flex flex-wrap items-center space-x-2 mb-5">
+					<Search placeholder="Cari sesuatu..." onSearch={(e) => ''} className="w-48" allowClear />
+					<Select
+						defaultValue={{
+							value: 0,
+							label: "Pilih"
+						}}
+						onChange={(e) => alert(e)}
+						className="w-auto md:min-w-[10rem]"  >
+						<Select.Option value={0}>Pilih</Select.Option>
+						<Select.Option value='active'>Aktif</Select.Option>
+						<Select.Option value="not_active">Tidak Aktif</Select.Option>
+					</Select>
+				</div>
+				<Table
+					loading={false}
+					columns={columns}
+					dataSource={dataSource}
+					pagination={{ position: ['bottomRight'] }}
+					scroll={{ x: 2000 }}
+				/>
+				{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 
-		</div>
-	</Card >;
+			</div>
+		</Card>
+	</>;
 }
 
 const FormModal = (props: {
