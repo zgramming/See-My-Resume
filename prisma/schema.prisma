@@ -11,197 +11,197 @@ datasource db {
 }
 
 enum StatusActive {
-	active
-	not_active
-	none
+  active
+  not_active
+  none
 }
 
 model AppGroupUser {
-	id Int @id @default(autoincrement())
-	code String @db.VarChar(50) @unique
-	name String @db.VarChar(100)
-	status StatusActive @default(active)
-	
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
-	
-	/// Relationship
-	user Users[]
-	accessModul AppAccessModul[]
-	accessMenu AppAccessMenu[]
-	@@map("app_group_user")
+  id     Int          @id @default(autoincrement())
+  code   String       @unique @db.VarChar(50)
+  name   String       @db.VarChar(100)
+  status StatusActive @default(active)
+
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
+
+  /// Relationship
+  user        Users[]
+  accessModul AppAccessModul[]
+  accessMenu  AppAccessMenu[]
+
+  @@map("app_group_user")
 }
 
 model AppAccessMenu {
-	id String @id @default(uuid())
-	app_group_user_id Int
-	app_modul_id Int
-	app_menu_id Int
-	allowed_access Json?
+  id                String @id @default(uuid())
+  app_group_user_id Int
+  app_modul_id      Int
+  app_menu_id       Int
+  allowed_access    Json?
 
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
-	
-	/// Relationship
-	appGroupUser AppGroupUser @relation(fields: [app_group_user_id],references: [id])
-	appModul AppModul @relation(fields: [app_modul_id],references: [id])
-	appMenu AppMenu @relation(fields: [app_menu_id],references: [id])
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	@@map("app_access_menu")
+  /// Relationship
+  appGroupUser AppGroupUser @relation(fields: [app_group_user_id], references: [id])
+  appModul     AppModul     @relation(fields: [app_modul_id], references: [id])
+  appMenu      AppMenu      @relation(fields: [app_menu_id], references: [id])
+
+  @@map("app_access_menu")
 }
 
 model AppMenu {
-	id Int @id @default(autoincrement())
-	app_modul_id Int
-	app_menu_id_parent Int 
-	code String @db.VarChar(50)
-	name String @db.VarChar(100)
-	route String @db.VarChar(100)
-	order Int @default(0)
-	icon String @db.VarChar(50)
-	status StatusActive @default(active)
-	
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
+  id                 Int          @id @default(autoincrement())
+  app_modul_id       Int
+  app_menu_id_parent Int
+  code               String       @db.VarChar(50)
+  name               String       @db.VarChar(100)
+  route              String       @db.VarChar(100)
+  order              Int          @default(0)
+  icon               String       @db.VarChar(50)
+  status             StatusActive @default(active)
 
-	/// Relationship
-	appModul AppModul @relation(fields: [app_modul_id] , references: [id])
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	menuParent AppMenu @relation(name: "menu",fields: app_menu_id_parent,references: id)
-	menuChildrens AppMenu[] @relation(name: "menu")
-	accessMenu AppAccessMenu[]
+  /// Relationship
+  appModul      AppModul        @relation(fields: [app_modul_id], references: [id])
+  menuParent    AppMenu?        @relation(name: "parent_children", fields: [app_menu_id_parent], references: [id])
+  menuChildrens AppMenu[]       @relation(name: "parent_children")
+  accessMenu    AppAccessMenu[]
 
-	@@map("app_menu")
+  @@map("app_menu")
 }
 
 model AppAccessModul {
-	id String @id @default(uuid())
-	app_group_user_id Int
-	app_modul_id Int
+  id                String @id @default(uuid())
+  app_group_user_id Int
+  app_modul_id      Int
 
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	/// Relationship
-	appGroupUser AppGroupUser @relation(fields: [app_group_user_id],references: [id])
-	appModul AppModul @relation(fields: [app_modul_id],references: [id])
+  /// Relationship
+  appGroupUser AppGroupUser @relation(fields: [app_group_user_id], references: [id])
+  appModul     AppModul     @relation(fields: [app_modul_id], references: [id])
 
-	@@map("app_acess_modul")
-
+  @@map("app_acess_modul")
 }
 
 model AppModul {
-	id Int @id @default(autoincrement())
-	code String @db.VarChar(50) @unique
-	name String @db.VarChar(100)
-	order Int @db.Int @default(0)
-	pattern String @db.VarChar(255) @unique 
-	icon String? @db.VarChar(100)
-	status StatusActive @default(active)
-	
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
+  id      Int          @id @default(autoincrement())
+  code    String       @unique @db.VarChar(50)
+  name    String       @db.VarChar(100)
+  order   Int          @default(0) @db.Int
+  pattern String       @unique @db.VarChar(255)
+  icon    String?      @db.VarChar(100)
+  status  StatusActive @default(active)
 
-	/// Relationship
-	menus AppMenu[]
-	accessModuls AppAccessModul[]
-	accessMenus AppAccessMenu[]
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	@@map("app_modul")
+  /// Relationship
+  menus        AppMenu[]
+  accessModuls AppAccessModul[]
+  accessMenus  AppAccessMenu[]
+
+  @@map("app_modul")
 }
 
 model MasterCategory {
-	id Int @id @default(autoincrement())
-	master_category_id Int
-	code String @db.VarChar(50) @unique
-	name String @db.VarChar(100)
-	description String? @db.Text
-	status StatusActive @default(active)
+  id                 Int          @id @default(autoincrement())
+  master_category_id Int
+  code               String       @unique @db.VarChar(50)
+  name               String       @db.VarChar(100)
+  description        String?      @db.Text
+  status             StatusActive @default(active)
 
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int?
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	/// Relationship
-	masterCategoryParent MasterCategory @relation(name: "category",fields: [master_category_id],references: [id])
-	masterCategoryChildren MasterCategory[] @relation(name: "category")
-	masterDatas MasterData[]
+  /// Relationship
+  masterCategoryParent   MasterCategory   @relation(name: "category", fields: [master_category_id], references: [id])
+  masterCategoryChildren MasterCategory[] @relation(name: "category")
+  masterDatas            MasterData[]
 
-	@@map("master_category")
+  @@map("master_category")
 }
 
 model MasterData {
-	id Int @id @default(autoincrement())
-	master_data_id Int
-	master_category_id Int
-	master_category_code String @db.VarChar(50)
-	code String @db.VarChar(50) @unique
-	name String @db.VarChar(100)
-	description String? @db.Text
-	status StatusActive @default(active)
-	parameter Json?
+  id                   Int          @id @default(autoincrement())
+  master_data_id       Int
+  master_category_id   Int
+  master_category_code String       @db.VarChar(50)
+  code                 String       @unique @db.VarChar(50)
+  name                 String       @db.VarChar(100)
+  description          String?      @db.Text
+  status               StatusActive @default(active)
+  parameter            Json?
 
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int?
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
 
-	/// Relationship
-	masterCategory MasterCategory @relation(fields: [master_category_id],references: [id])
-	masterDataParent MasterData @relation(name: "master_data",fields: [master_data_id],references: [id])
-	masterDataChildren MasterData[] @relation(name: "master_data")
-	
-	@@map("master_data")
+  /// Relationship
+  masterCategory     MasterCategory @relation(fields: [master_category_id], references: [id])
+  masterDataParent   MasterData     @relation(name: "master_data", fields: [master_data_id], references: [id])
+  masterDataChildren MasterData[]   @relation(name: "master_data")
+
+  @@map("master_data")
 }
 
 model Parameter {
-	id Int @id @default(autoincrement())
-	name String @db.VarChar(100)
-	code String @db.VarChar(50) @unique
-	value String @db.Text
-	status StatusActive @default(active)
+  id     Int          @id @default(autoincrement())
+  name   String       @db.VarChar(100)
+  code   String       @unique @db.VarChar(50)
+  value  String       @db.Text
+  status StatusActive @default(active)
 
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int?
-	
-	@@map("parameter")
+  /// Template
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by Int?
+  updated_by Int?
+
+  @@map("parameter")
 }
 
 model Users {
-	id Int @id @default(autoincrement())
-	app_group_user_id Int
-	name String @db.VarChar(100)
-	username String @db.VarChar(50) @unique
-	password String @db.Text
-	status StatusActive
-	/// Template
-	created_at DateTime @default(now())
-	updated_at DateTime @updatedAt
-	created_by Int? 
-	updated_by Int? 
-	
-	/// Relationship
-	app_group_user AppGroupUser @relation(fields: [app_group_user_id],references: [id])
-	@@map("users")
+  id                Int          @id @default(autoincrement())
+  app_group_user_id Int
+  name              String       @db.VarChar(100)
+  username          String       @unique @db.VarChar(50)
+  password          String       @db.Text
+  status            StatusActive
+  /// Template
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+  created_by        Int?
+  updated_by        Int?
+
+  /// Relationship
+  app_group_user AppGroupUser @relation(fields: [app_group_user_id], references: [id])
+
+  @@map("users")
 }
