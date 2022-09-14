@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React from 'react';
 
+
 import HeaderMenu from '../components/layout/header_menu';
 import SiderMenu from '../components/layout/sider_menu';
 import MyBreadcrum from '../components/reusable/breadcrumb';
@@ -70,6 +71,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 		</ConfigProvider>
 	</>
 }
-
 
 export default MyApp
