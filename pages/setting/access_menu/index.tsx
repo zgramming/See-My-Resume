@@ -113,9 +113,11 @@ const FormModal = (props: {
 
 	return <Modal
 		title="Form Tambah"
-		open={props.open}
 		maskClosable={false}
+		keyboard={false}
+		closable={false}
 		width="1000px"
+		open={props.open}
 		onCancel={props.onCloseModal}
 		footer={
 			<Space>
