@@ -9,18 +9,20 @@ import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { sleep } from '../../../utils/function';
 
 interface DataSourceInterface {
-	no: ReactNode,
-	group_user: ReactNode,
-	username: ReactNode,
-	name: ReactNode,
-	status: ReactNode,
-	created_at: ReactNode,
-	updated_at: ReactNode,
-	action: ReactNode,
+	no: number,
+	group_user: string,
+	username: string,
+	name: string,
+	status: string,
+	created_at: string,
+	updated_at: string,
+	action: string,
 }
 const UserPage = () => {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 
 	const deleteHandler = async () => {
 		Modal.confirm({
@@ -43,24 +45,34 @@ const UserPage = () => {
 		{ key: "status", dataIndex: "status", title: "Status" },
 		{ key: "created_at", dataIndex: "created_at", title: "Created At" },
 		{ key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },
-		{ key: "action", dataIndex: "action", title: "Aksi", width: 100 },
+		{
+			key: "action",
+			dataIndex: "action",
+			title: "Aksi",
+			width: 100,
+			render: (val) => {
+				return <Space align="center">
+					<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
+					<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
+				</Space>
+			}
+		},
 	];
 
-	let dataSource: DataSourceInterface[] = [
-		{
-			no: 1,
-			group_user: "Superadmin",
-			username: "zeffry",
-			name: "Zeffry Reynando",
-			status: "Aktif",
+	let dataSource: DataSourceInterface[] = [];
+
+	for (let i = 1; i <= 9999; i++) {
+		dataSource.push({
+			no: i,
+			name: "Name" + i,
+			group_user: "group user" + 1,
+			status: "status" + i,
+			username: "username" + i,
 			created_at: new Date().toDateString(),
 			updated_at: new Date().toDateString(),
-			action: <Space align="center">
-				<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
-				<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
-			</Space>
-		}
-	];
+			action: ""
+		})
+	}
 
 	return <Card>
 		<div className="flex flex-col">
@@ -88,8 +100,21 @@ const UserPage = () => {
 				loading={false}
 				columns={columns}
 				dataSource={dataSource}
-				pagination={{ position: ['bottomRight'] }}
 				scroll={{ x: 2000 }}
+				pagination={{
+					total: dataSource.length,
+					current: currentPage,
+					pageSize: pageSize,
+					showPrevNextJumpers: false,
+					onChange: (page, size) => {
+						setCurrentPage(page);
+						alert(`onchagen ${page} ${size}`)
+					},
+					onShowSizeChange: (current, size) => {
+						setPageSize(size);
+						alert(`onchagen ${current} ${size}`)
+					}
+				}}
 			/>
 			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 		</div>

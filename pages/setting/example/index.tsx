@@ -4,6 +4,7 @@ import {
 } from 'antd';
 import Card from 'antd/lib/card/Card';
 import Search from 'antd/lib/input/Search';
+import TextArea from 'antd/lib/input/TextArea';
 import { useState } from 'react';
 
 import {
@@ -12,26 +13,27 @@ import {
 } from '@ant-design/icons';
 
 import { sleep } from '../../../utils/function';
-import TextArea from 'antd/lib/input/TextArea';
 
 interface DataSourceInterface {
-	no: React.ReactNode,
-	name: React.ReactNode,
-	code: React.ReactNode,
-	job: React.ReactNode,
-	birth_date: React.ReactNode,
-	money: React.ReactNode,
-	hobby: React.ReactNode,
-	status: React.ReactNode,
-	image?: React.ReactNode,
-	file?: React.ReactNode,
-	created_at: React.ReactNode,
-	updated_at: React.ReactNode,
-	action: React.ReactNode,
+	no: number,
+	name: string,
+	code: string,
+	job: string,
+	birth_date: string,
+	money: number,
+	hobby: string,
+	status: string,
+	image?: string,
+	file?: string,
+	created_at: string,
+	updated_at: string,
+	action: string,
 }
 
 const ExamplePage = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 
 	const deleteHandler = async () => {
 		Modal.confirm({
@@ -62,35 +64,37 @@ const ExamplePage = () => {
 		{ key: "file", dataIndex: "file", title: "File (Show File)" },
 		{ key: "created_at", dataIndex: "created_at", title: "Created At (DateTime)" },
 		{ key: "updated_at", dataIndex: "updated_at", title: "Updated At (DateTime)" },
-		{ key: "action", dataIndex: "action", title: "Action (Custom Button)" },
+		{
+			key: "action", dataIndex: "action", title: "Action (Custom Button)", render: (val) => {
+				return <Space>
+					<Button icon={<EditOutlined />} className="bg-info	text-white" >Edit Halaman</Button>
+					<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} >Edit Modal</Button>
+					<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} >Delete</Button>
+					<Button icon={<SearchOutlined />} className="bg-white text-black" >Preview</Button>
+				</Space>
+			}
+		},
 	];
 
 	let dataSource: DataSourceInterface[] = [];
-	for (let i = 0; i <= 10; i++) dataSource = [
-		...dataSource,
-		{
+
+	for (let i = 1; i <= 9999; i++) {
+		dataSource.push({
 			no: i + 1,
 			name: `Name ${i}`,
 			code: `Code ${i}`,
 			job: `Job ${i}`,
 			birth_date: `Birth Date ${i}`,
-			money: `Money ${i}`,
+			money: i,
 			hobby: `Hobby ${i}`,
 			status: `Status ${i}`,
 			image: `Image ${i}`,
 			file: `File	 ${i}`,
 			created_at: `Created At ${i}`,
 			updated_at: `Updated At ${i}`,
-			action: <>
-				<Space>
-					<Button icon={<EditOutlined />} className="bg-info	text-white" >Edit Halaman</Button>
-					<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} >Edit Modal</Button>
-					<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} >Delete</Button>
-					<Button icon={<SearchOutlined />} className="bg-white text-black" >Preview</Button>
-				</Space>
-			</>
-		}
-	];
+			action: ""
+		})
+	}
 
 	return <Card>
 		<div className="flex flex-col">
@@ -122,8 +126,21 @@ const ExamplePage = () => {
 				loading={false}
 				columns={columns}
 				dataSource={dataSource}
-				pagination={{ position: ['bottomRight'] }}
 				scroll={{ x: 2000 }}
+				pagination={{
+					total: dataSource.length,
+					current: currentPage,
+					pageSize: pageSize,
+					showPrevNextJumpers: false,
+					onChange: (page, size) => {
+						setCurrentPage(page);
+						alert(`onchagen ${page} ${size}`)
+					},
+					onShowSizeChange: (current, size) => {
+						setPageSize(size);
+						alert(`onchagen ${current} ${size}`)
+					}
+				}}
 			/>
 			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 
@@ -146,7 +163,7 @@ const FormModal = (props: {
 		open={props.open}
 		maskClosable={false}
 		keyboard={false}
-		closable={false} 
+		closable={false}
 		width="1000px"
 		onCancel={props.onCloseModal}
 		footer={

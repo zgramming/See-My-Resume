@@ -2,7 +2,7 @@ import {
 	Button, Card, Col, Form, Input, Modal, Radio, Row, Select, Space, Table, TableColumnsType
 } from 'antd';
 import Search from 'antd/lib/input/Search';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -11,20 +11,22 @@ import { useRouter } from 'next/router';
 import TextArea from 'antd/lib/input/TextArea';
 
 interface DataSourceInterface {
-	no: ReactNode,
-	code: ReactNode,
-	name: ReactNode,
-	value: ReactNode,
-	status: ReactNode,
-	created_at: ReactNode,
-	updated_at: ReactNode,
-	action: ReactNode,
+	no: number,
+	code: string,
+	name: string,
+	value: string,
+	status: string,
+	created_at: string,
+	updated_at: string,
+	action: string,
 }
 
 const MasterDataPage = () => {
 	const router = useRouter();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
 
 	const deleteHandler = async () => {
 		Modal.confirm({
@@ -47,24 +49,34 @@ const MasterDataPage = () => {
 		{ key: "status", dataIndex: "status", title: "Status" },
 		{ key: "created_at", dataIndex: "created_at", title: "Created At" },
 		{ key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },
-		{ key: "action", dataIndex: "action", title: "Aksi", width: 100 },
+		{
+			key: "action",
+			dataIndex: "action",
+			title: "Aksi",
+			width: 100,
+			render: (val) => {
+				return <Space align="center">
+					<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
+					<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
+				</Space>
+			}
+		},
 	];
 
-	let dataSource: DataSourceInterface[] = [
-		{
-			no: 1,
+	let dataSource: DataSourceInterface[] = [];
+
+	for (let i = 1; i <= 9999; i++) {
+		dataSource.push({
+			no: i,
 			name: "Zeffry Reynando",
 			code: "Code",
 			value: "Value",
 			status: "Aktif",
 			created_at: new Date().toDateString(),
 			updated_at: new Date().toDateString(),
-			action: <Space align="center">
-				<Button icon={<EditOutlined />} className="bg-info text-white" onClick={() => setIsModalOpen(true)} />
-				<Button icon={<DeleteOutlined />} className="bg-error text-white" onClick={deleteHandler} />
-			</Space>
-		}
-	];
+			action: ""
+		})
+	}
 
 	return <Card>
 		<div className="flex flex-col">
@@ -92,9 +104,23 @@ const MasterDataPage = () => {
 				loading={false}
 				columns={columns}
 				dataSource={dataSource}
-				pagination={{ position: ['bottomRight'] }}
 				scroll={{ x: 2000 }}
+				pagination={{
+					total: dataSource.length,
+					current: currentPage,
+					pageSize: pageSize,
+					showPrevNextJumpers: false,
+					onChange: (page, size) => {
+						setCurrentPage(page);
+						alert(`onchagen ${page} ${size}`)
+					},
+					onShowSizeChange: (current, size) => {
+						setPageSize(size);
+						alert(`onchagen ${current} ${size}`)
+					}
+				}}
 			/>
+
 			{isModalOpen && <FormModal open={isModalOpen} onCloseModal={() => setIsModalOpen(false)} />}
 
 		</div>
