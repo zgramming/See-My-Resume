@@ -244,7 +244,7 @@ const FormModal = (props: {
 
   return (
     <Modal
-      title="Form Tambah"
+      title="Form Access Modul"
       open={props.open}
       maskClosable={false}
       keyboard={false}
