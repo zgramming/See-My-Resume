@@ -4,9 +4,11 @@ import {
   Form,
   Input,
   Modal,
+  notification,
   Radio,
   Select,
   Space,
+  Spin,
   Table,
   TableColumnsType,
 } from "antd";
@@ -15,8 +17,10 @@ import { useEffect, useState } from "react";
 
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { sleep } from "../../../utils/function";
+import { convertObjectIntoQueryParams } from "../../../utils/function";
 import axios from "axios";
+import useSWR from "swr";
+import { AppGroupUser } from "../../../interface/main_interface";
 
 interface DataSourceInterface {
   no: number;
@@ -25,29 +29,54 @@ interface DataSourceInterface {
   status: string;
   created_at: string;
   updated_at: string;
-  action: string;
+  action: AppGroupUser;
 }
 
 const userGroupFetcher = async (url: string, params: any) => {
-	
-  const result = await axios.get(`${url}`);
+  const queryParam = convertObjectIntoQueryParams(params);
+  const request = await axios.get(`${url}${queryParam}`);
+  const { data, success }: { data: AppGroupUser[]; success: boolean } =
+    request.data;
+  return data;
 };
+
+const ApiURL = `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/user_group`;
 
 const GroupUserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [row, setRow] = useState<AppGroupUser | undefined>(undefined);
+  const [queryParam, setQueryParam] = useState<{
+    limit: number;
+    offset: number;
+    code?: string;
+    name?: string;
+    status?: string;
+  }>({
+    limit: 10,
+    offset: 0,
+  });
 
-  const deleteHandler = async () => {
+  const {
+    data: dataUserGroup,
+    error,
+    isValidating,
+    mutate: reloadUserGroup,
+  } = useSWR([`${ApiURL}`, queryParam], userGroupFetcher);
+
+  const deleteHandler = async (id: number) => {
     Modal.confirm({
       title: "Are you sure delete this row ?",
       maskClosable: false,
       onOk: async () => {
-        await sleep(5000);
+        const request = await axios.delete(`${ApiURL}/${id}`);
+        const { success, message, data } = request.data;
+        notification.success({
+          message: "Success",
+          description: message,
+        });
+        reloadUserGroup();
       },
-      onCancel: async () => {
-        alert("cancel");
-      },
+      onCancel: async () => {},
     });
   };
 
@@ -63,18 +92,21 @@ const GroupUserPage = () => {
       dataIndex: "action",
       title: "Aksi",
       width: 100,
-      render: (val) => {
+      render: (val: AppGroupUser) => {
         return (
           <Space align="center">
             <Button
               icon={<EditOutlined />}
               className="bg-info text-white"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setIsModalOpen(true);
+                setRow(val);
+              }}
             />
             <Button
               icon={<DeleteOutlined />}
               className="bg-error text-white"
-              onClick={deleteHandler}
+              onClick={(e) => deleteHandler(val.id)}
             />
           </Space>
         );
@@ -82,22 +114,21 @@ const GroupUserPage = () => {
     },
   ];
 
-  let dataSource: DataSourceInterface[] = [];
-
-  for (let i = 1; i <= 9999; i++) {
-    dataSource.push({
-      no: i,
-      code: "code" + i,
-      name: "name" + i,
-      status: "status" + 1,
-      created_at: new Date().toDateString(),
-      updated_at: new Date().toDateString(),
-      action: "",
-    });
-  }
+  const dataSource: DataSourceInterface[] =
+    dataUserGroup?.map((val, index) => {
+      return {
+        no: index + 1,
+        code: val.code,
+        name: val.name,
+        status: val.status,
+        created_at: new Date(val.created_at).toDateString(),
+        updated_at: new Date(val.updated_at).toDateString(),
+        action: val,
+      };
+    }) ?? [];
 
   return (
-    <>
+    <Spin spinning={!dataUserGroup}>
       <Card>
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-5">
@@ -108,7 +139,10 @@ const GroupUserPage = () => {
               <Button
                 icon={<PlusOutlined />}
                 className="bg-success text-white"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setRow(undefined);
+                }}
               >
                 Tambah
               </Button>
@@ -122,110 +156,149 @@ const GroupUserPage = () => {
               allowClear
             />
             <Select
+              className="w-auto md:min-w-[10rem]"
               defaultValue={{
-                value: 0,
+                value: "",
                 label: "Pilih",
               }}
-              onChange={(e) => alert(e)}
-              className="w-auto md:min-w-[10rem]"
+              onChange={(value: any) => {
+                setQueryParam((val) => {
+                  return { ...val, status: value };
+                });
+              }}
             >
-              <Select.Option value={0}>Pilih</Select.Option>
+              <Select.Option value={""}>Pilih</Select.Option>
               <Select.Option value="active">Aktif</Select.Option>
               <Select.Option value="not_active">Tidak Aktif</Select.Option>
             </Select>
           </div>
           <Table
-            loading={false}
             columns={columns}
             dataSource={dataSource}
             scroll={{ x: 2000 }}
             pagination={{
               total: dataSource.length,
-              current: currentPage,
-              pageSize: pageSize,
-              showPrevNextJumpers: false,
-              onChange: (page, size) => {
-                setCurrentPage(page);
-                alert(`onchagen ${page} ${size}`);
-              },
+              pageSize: queryParam.limit,
+              showSizeChanger: true,
               onShowSizeChange: (current, size) => {
-                setPageSize(size);
-                alert(`onchagen ${current} ${size}`);
+                setQueryParam((val) => {
+                  return { ...val, limit: size };
+                });
               },
             }}
           />
           {isModalOpen && (
             <FormModal
               open={isModalOpen}
-              onCloseModal={() => setIsModalOpen(false)}
+              row={row}
+              onCloseModal={(needReload) => {
+                setIsModalOpen(false);
+                if (needReload) reloadUserGroup();
+              }}
             />
           )}
         </div>
       </Card>
-    </>
+    </Spin>
   );
 };
 
-const FormModal = (props: { open: boolean; onCloseModal: () => void }) => {
+const FormModal = (props: {
+  open: boolean;
+  row?: AppGroupUser;
+  onCloseModal: (needReload?: boolean) => void;
+}) => {
   const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onFinish = (values: any) => {
-    console.log(values);
+  const onFinish = async () => {
+    try {
+      setIsLoading(true);
+      const values = await form.validateFields();
+      let response;
+      if (props.row) {
+        response = await axios.put(`${ApiURL}/${props.row.id}`, values);
+        /// Update
+      } else {
+        response = await axios.post(`${ApiURL}`, values);
+        /// Insert
+      }
+      const { data, message, success } = response.data;
+      notification.success({
+        message: "Success",
+        description: message,
+      });
+      props.onCloseModal(true);
+    } catch (e: any) {
+      const { message, code, status } = e?.response?.data || {};
+      notification.error({
+        duration: 0,
+        message: "Error",
+        description: message || "Unknown Error Message",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
     form.setFieldsValue({
-      code: "",
-      name: "",
-      status: "active",
+      id: props.row?.id,
+      code: props.row?.code,
+      name: props.row?.name,
+      status: props.row?.status ?? "active",
     });
 
     return () => {};
-  }, [form]);
+  }, [form, props.row]);
 
   return (
     <Modal
-      title="Form Tambah"
+      title="Form Group User"
       open={props.open}
       maskClosable={false}
       keyboard={false}
       closable={false}
       width="1000px"
-      onCancel={props.onCloseModal}
+      onCancel={(e) => props.onCloseModal()}
       footer={
-        <Space>
-          <Button onClick={props.onCloseModal}>Batal</Button>
+        <Spin spinning={isLoading}>
+          <Button onClick={(e) => props.onCloseModal()}>Batal</Button>
           <Button
             htmlType="submit"
             form="form_validation"
             className="bg-success text-white"
-            onClick={() => alert("save!")}
           >
             Simpan
           </Button>
-        </Space>
+        </Spin>
       }
     >
-      <Form
-        form={form}
-        name="form_validation"
-        id="form_validation"
-        layout="vertical"
-        onFinish={onFinish}
-      >
-        <Form.Item label="Kode" name="code">
-          <Input name="code" placeholder="Input code" />
-        </Form.Item>
-        <Form.Item label="Nama" name="name">
-          <Input name="name" placeholder="Input Name" />
-        </Form.Item>
-        <Form.Item name="status" label="Status">
-          <Radio.Group>
-            <Radio value={"active"}>Aktif</Radio>
-            <Radio value={"not_active"}>Tidak Aktif</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </Form>
+      <Spin spinning={isLoading}>
+        <Form
+          form={form}
+          name="form_validation"
+          id="form_validation"
+          layout="vertical"
+          onFinish={onFinish}
+        >
+          <Form.Item label="ID" name="id" className="hidden">
+            <Input name="id" placeholder="ID" />
+          </Form.Item>
+          <Form.Item label="Kode" name="code" rules={[{ required: true }]}>
+            <Input name="code" placeholder="Input code" />
+          </Form.Item>
+          <Form.Item label="Nama" name="name" rules={[{ required: true }]}>
+            <Input name="name" placeholder="Input Name" />
+          </Form.Item>
+          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+            <Radio.Group>
+              <Radio value={"active"}>Aktif</Radio>
+              <Radio value={"not_active"}>Tidak Aktif</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Form>
+      </Spin>
     </Modal>
   );
 };
