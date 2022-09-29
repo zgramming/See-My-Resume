@@ -18,6 +18,7 @@ interface DataSourceInterface {
 	updated_at: string,
 	action: string,
 }
+
 const UserPage = () => {
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
