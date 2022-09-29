@@ -20,4 +20,17 @@ const convertRoutePathToArray = (pathname: string): string[] => {
       return route;
     });
 };
-export { sleep, convertRoutePathToArray };
+
+const convertObjectIntoQueryParams = (queryParam: any) => {
+  if (!queryParam) return "";
+
+  const params =
+    "?" +
+    Object.keys(queryParam)
+      .map((key) => key + "=" + queryParam[key])
+      .join("&");
+
+  return params;
+};
+
+export { sleep, convertRoutePathToArray, convertObjectIntoQueryParams };
