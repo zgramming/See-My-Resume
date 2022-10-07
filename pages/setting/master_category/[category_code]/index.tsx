@@ -1,55 +1,58 @@
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import {
+  Modal,
+  TableColumnsType,
+  Space,
   Button,
   Card,
+  Select,
+  Table,
   Form,
   Input,
-  Modal,
-  notification,
   Radio,
-  Select,
-  Space,
+  Row,
+  Col,
+  notification,
   Spin,
-  Table,
-  TableColumnsType,
 } from "antd";
 import Search from "antd/lib/input/Search";
-import { useEffect, useState } from "react";
-
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-
-import { convertObjectIntoQueryParams } from "../../../utils/function";
-import Link from "next/link";
 import TextArea from "antd/lib/input/TextArea";
-import { MasterCategory } from "../../../interface/main_interface";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
+import { MasterData } from "../../../../interface/main_interface";
+import { convertObjectIntoQueryParams } from "../../../../utils/function";
 
 interface DataSourceInterface {
   no: number;
-  parent: MasterCategory;
+  category: MasterData;
   code: string;
   name: string;
-  total_master_data: MasterCategory;
   status: string;
   created_at: string;
   updated_at: string;
-  action: MasterCategory;
+  action: MasterData;
 }
 
-const masterCategoryFetcher = async (url: string, params: any) => {
+const ApiURL = `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/master_data`;
+
+const masterDataFetcher = async (url: string, params: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
-  const { data, success }: { data: MasterCategory[]; success: boolean } =
+  const { data, success }: { data: MasterData[]; success: boolean } =
     request.data;
   return data;
 };
 
-const ApiURL = `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/master_category`;
+const MasterDataPage = () => {
+  const { query, isReady } = useRouter();
+  const { category_code } = query;
 
-const MasterCategoryPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [row, setRow] = useState<MasterCategory | undefined>(undefined);
+  const [row, setRow] = useState<MasterData | undefined>(undefined);
   const [queryParam, setQueryParam] = useState<{
+    master_category_code?: string | undefined | string[];
     limit: number;
     offset: number;
     code?: string;
@@ -61,11 +64,21 @@ const MasterCategoryPage = () => {
   });
 
   const {
-    data: dataMasterCategory,
+    data: dataMasterData,
     error,
     isValidating,
-    mutate: reloadMasterCategory,
-  } = useSWR([`${ApiURL}`, queryParam], masterCategoryFetcher);
+    mutate: reloadMasterData,
+  } = useSWR([`${ApiURL}`, queryParam], masterDataFetcher);
+
+  useEffect(() => {
+    if (isReady) {
+      setQueryParam((prevState) => {
+        return { ...prevState, master_category_code: category_code };
+      });
+    }
+
+    return () => {};
+  }, [category_code, isReady]);
 
   const deleteHandler = async (id: number) => {
     Modal.confirm({
@@ -78,7 +91,7 @@ const MasterCategoryPage = () => {
           message: "Success",
           description: message,
         });
-        reloadMasterCategory();
+        reloadMasterData();
       },
       onCancel: async () => {},
     });
@@ -87,33 +100,13 @@ const MasterCategoryPage = () => {
   const columns: TableColumnsType<DataSourceInterface> = [
     { key: "no", dataIndex: "no", title: "No" },
     {
-      key: "parent",
-      dataIndex: "parent",
-      title: "Induk",
-      render: (val: MasterCategory) => val.masterCategoryParent?.name,
+      key: "category",
+      dataIndex: "category",
+      title: "Kategori",
+      render: (val: MasterData) => val.masterCategory?.code,
     },
     { key: "code", dataIndex: "code", title: "Kode" },
     { key: "name", dataIndex: "name", title: "Nama" },
-    {
-      key: "total_master_data",
-      dataIndex: "total_master_data",
-      title: "Master Data",
-      width: 150,
-      align: "center",
-      render: (val: MasterCategory) => {
-        return (
-          <Link
-            href={{
-              pathname: `/setting/master_category/${val.code}`,
-            }}
-          >
-            <a className="font-bold text-center">
-              {val.masterDatas?.length ?? 0}
-            </a>
-          </Link>
-        );
-      },
-    },
     { key: "status", dataIndex: "status", title: "Status" },
     { key: "created_at", dataIndex: "created_at", title: "Created At" },
     { key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },
@@ -121,8 +114,8 @@ const MasterCategoryPage = () => {
       key: "action",
       dataIndex: "action",
       title: "Aksi",
-      width: 100,
-      render: (val: MasterCategory) => {
+      width: 150,
+      render: (val: MasterData) => {
         return (
           <Space align="center">
             <Button
@@ -145,14 +138,13 @@ const MasterCategoryPage = () => {
   ];
 
   const dataSource: DataSourceInterface[] =
-    dataMasterCategory?.map((val, index) => {
+    dataMasterData?.map((val, index) => {
       return {
         no: index + 1,
-        code: val.code,
+        category: val,
         name: val.name,
+        code: val.code,
         status: val.status,
-        parent: val,
-        total_master_data: val,
         created_at: new Date(val.created_at).toDateString(),
         updated_at: new Date(val.updated_at).toDateString(),
         action: val,
@@ -164,7 +156,7 @@ const MasterCategoryPage = () => {
       <div className="flex flex-col">
         <div className="flex justify-between items-center mb-5">
           <h1 className="font-medium text-base mr-5 md:text-xl">
-            Master Category
+            Master Data {category_code ?? "?"}
           </h1>
           <Space wrap>
             <Button
@@ -189,8 +181,10 @@ const MasterCategoryPage = () => {
               label: "Pilih",
             }}
             onChange={(e: any) =>
-              setQueryParam((val) => {
-                return { ...val, status: e };
+              setQueryParam((prevValue) => {
+                const result = { ...prevValue, status: e };
+                if (e == "") delete result.status;
+                return { ...result };
               })
             }
             className="w-auto md:min-w-[10rem]"
@@ -216,13 +210,14 @@ const MasterCategoryPage = () => {
             },
           }}
         />
+
         {isModalOpen && (
           <FormModal
             open={isModalOpen}
             row={row}
             onCloseModal={(needReload) => {
               setIsModalOpen(false);
-              if (needReload) reloadMasterCategory();
+              if (needReload) reloadMasterData();
             }}
           />
         )}
@@ -233,9 +228,12 @@ const MasterCategoryPage = () => {
 
 const FormModal = (props: {
   open: boolean;
-  row?: MasterCategory;
+  row?: MasterData;
   onCloseModal: (needReload?: boolean) => void;
 }) => {
+  const { query } = useRouter();
+  const { category_code } = query;
+
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -245,10 +243,16 @@ const FormModal = (props: {
       const values = await form.validateFields();
       let response;
       if (props.row) {
-        response = await axios.put(`${ApiURL}/${props.row.id}`, values);
+        response = await axios.put(`${ApiURL}/${props.row.id}`, {
+          master_category_code: category_code,
+          ...values,
+        });
         /// Update
       } else {
-        response = await axios.post(`${ApiURL}`, values);
+        response = await axios.post(`${ApiURL}`, {
+          master_category_code: category_code,
+          ...values,
+        });
         /// Insert
       }
       const { data, message, success } = response.data;
@@ -271,11 +275,16 @@ const FormModal = (props: {
 
   useEffect(() => {
     form.setFieldsValue({
-      master_category_id: props.row?.master_category_id ?? "",
       code: props.row?.code,
       name: props.row?.name,
       description: props.row?.description,
       status: props.row?.status ?? "active",
+      parameter1_key: props.row?.parameter1_key,
+      parameter2_key: props.row?.parameter2_key,
+      parameter3_key: props.row?.parameter3_key,
+      parameter1_value: props.row?.parameter1_value,
+      parameter2_value: props.row?.parameter2_value,
+      parameter3_value: props.row?.parameter3_value,
     });
 
     return () => {};
@@ -283,7 +292,7 @@ const FormModal = (props: {
 
   return (
     <Modal
-      title="Form Master Kategori"
+      title="Form Master Data"
       open={props.open}
       maskClosable={false}
       keyboard={false}
@@ -303,36 +312,57 @@ const FormModal = (props: {
         </Spin>
       }
     >
-      <Form
-        form={form}
-        name="form_validation"
-        id="form_validation"
-        layout="vertical"
-        onFinish={onFinish}
-      >
-        <Form.Item label="Induk Kategori" name="master_category_id">
-          <Select defaultValue={""}>
-            <Select.Option value={""}>Pilih</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item label="Kode" name="code" rules={[{ required: true }]}>
-          <Input placeholder="Input Kode" />
-        </Form.Item>
-        <Form.Item label="Nama" name="name" rules={[{ required: true }]}>
-          <Input placeholder="Input Nama" />
-        </Form.Item>
-        <Form.Item label="Deskripsi" name="description">
-          <TextArea rows={4} />
-        </Form.Item>
-        <Form.Item label="Status" name="status" rules={[{ required: true }]}>
-          <Radio.Group>
-            <Radio value={"active"}>Aktif</Radio>
-            <Radio value={"not_active"}>Tidak Aktif</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </Form>
+      <Spin spinning={isLoading}>
+        <Form
+          form={form}
+          name="form_validation"
+          id="form_validation"
+          layout="vertical"
+          onFinish={onFinish}
+        >
+          <Form.Item label="Kode" name="code">
+            <Input placeholder="Input Kode" />
+          </Form.Item>
+          <Form.Item label="Nama" name="name">
+            <Input placeholder="Input Nama" />
+          </Form.Item>
+          <Form.Item label="Deskripsi" name="description">
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item label="Status" name="status">
+            <Radio.Group>
+              <Radio value={"active"}>Aktif</Radio>
+              <Radio value={"not_active"}>Tidak Aktif</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Row gutter={24}>
+            {[1, 2, 3].map((val) => {
+              return (
+                <>
+                  <Col span={12}>
+                    <Form.Item
+                      label={`Key ${val}`}
+                      name={`parameter${val}_key`}
+                    >
+                      <Input placeholder="Input Key" />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label={`Value ${val}`}
+                      name={`parameter${val}_value`}
+                    >
+                      <Input placeholder="Input Value" />
+                    </Form.Item>
+                  </Col>
+                </>
+              );
+            })}
+          </Row>
+        </Form>
+      </Spin>
     </Modal>
   );
 };
 
-export default MasterCategoryPage;
+export default MasterDataPage;

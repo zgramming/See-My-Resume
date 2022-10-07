@@ -82,6 +82,26 @@ export interface AppModul {
   access_menus: AppAccessMenu[];
 }
 
+export interface Documentation {
+  id: number;
+  name: string;
+  code: string;
+  job_id: number;
+  birth_date: Date;
+  money: number;
+  hobbies?: string;
+  status?: string;
+  description?: string;
+  file?: string;
+  image?: string;
+
+  created_at: Date;
+  updated_at: Date;
+  created_by?: number;
+  updated_by?: number;
+  job: MasterData;
+}
+
 export interface MasterCategory {
   id: number;
   master_category_id: string;
@@ -122,9 +142,9 @@ export interface MasterData {
   created_by?: number;
   updated_by?: number;
 
-  master_category?: MasterCategory;
-  master_data_parent?: MasterData;
-  master_data_children: MasterData[];
+  masterCategory?: MasterCategory;
+  masterDataParent?: MasterData;
+  masterDataChildren: MasterData[];
 }
 
 export interface Parameter {

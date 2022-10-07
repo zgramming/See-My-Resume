@@ -27,8 +27,7 @@ const SiderMenu = (props: {}) => {
 		getItem('/setting/access_modul', 'Access Modul', <PieChartOutlined />),
 		getItem('/setting/access_menu', 'Access Menu', <PieChartOutlined />),
 		getItem('/setting/master_category', 'Master Kategori', <PieChartOutlined />),
-		getItem('/setting/master_data', 'Master Data', <PieChartOutlined />),
-		getItem('/setting/example', 'Dokumentasi', <PieChartOutlined />),
+		getItem('/setting/documentation', 'Dokumentasi', <PieChartOutlined />),
 		getItem('/setting/parameter', 'Parameter', <PieChartOutlined />),
 		getItem('?/setting/parent', 'Parent Menu', <PieChartOutlined />, [
 			getItem('/setting/parent/child_first', 'Child 1'),

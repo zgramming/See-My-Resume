@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 	const router = useRouter();
 
 	/// Only get 3 first value from array
-	const arrPathname = convertRoutePathToArray(router.pathname)
+	const arrPathname = convertRoutePathToArray(router.asPath)
 		.slice(0, 3)
 		.map(val => (val[0]?.toUpperCase() ?? "") + val.slice(1));
 
