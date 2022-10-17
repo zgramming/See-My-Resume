@@ -90,7 +90,7 @@ const MasterCategoryPage = () => {
       key: "parent",
       dataIndex: "parent",
       title: "Induk",
-      render: (val: MasterCategory) => val.masterCategoryParent?.name,
+      render: (val: MasterCategory) => val.master_category_parent?.name,
     },
     { key: "code", dataIndex: "code", title: "Kode" },
     { key: "name", dataIndex: "name", title: "Nama" },
@@ -108,7 +108,7 @@ const MasterCategoryPage = () => {
             }}
           >
             <a className="font-bold text-center">
-              {val.masterDatas?.length ?? 0}
+              {val.master_datas?.length ?? 0}
             </a>
           </Link>
         );

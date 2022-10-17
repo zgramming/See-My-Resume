@@ -3,6 +3,9 @@ export interface AppGroupUser {
   code: string;
   name: string;
   status: string;
+  user: Users[];
+  access_modul: AppAccessModul[];
+  access_menu: AppAccessMenu[];
 
   created_at: Date;
   updated_at: Date;
@@ -22,9 +25,9 @@ export interface AppAccessMenu {
   created_by?: number;
   updated_by?: number;
 
-  appGroupUser: AppGroupUser;
-  appModul: AppModul;
-  appMenu: AppMenu;
+  app_group_user: AppGroupUser;
+  app_modul: AppModul;
+  app_menu: AppMenu;
 }
 
 export interface AppMenu {
@@ -43,10 +46,10 @@ export interface AppMenu {
   created_by?: number;
   updated_by?: number;
 
-  appModul: AppModul;
-  menuParent?: AppMenu;
-  menuChildrens: AppMenu[];
-  accessMenu: AppAccessMenu[];
+  app_modul: AppModul;
+  menu_parent?: AppMenu;
+  menu_childrens: AppMenu[];
+  access_menu: AppAccessMenu[];
 }
 
 export interface AppAccessModul {
@@ -78,8 +81,8 @@ export interface AppModul {
   updated_by?: number;
 
   menus: AppMenu[];
-  access_moduls: AppAccessModul[];
-  access_menus: AppAccessMenu[];
+  access_modul: AppAccessModul[];
+  access_menu: AppAccessMenu[];
 }
 
 export interface Documentation {
@@ -116,9 +119,9 @@ export interface MasterCategory {
   created_by?: number;
   updated_by?: number;
 
-  masterCategoryParent?: MasterCategory;
-  masterCategoryChildren: MasterCategory[];
-  masterDatas: MasterData[];
+  master_category_parent?: MasterCategory;
+  master_category_children: MasterCategory[];
+  master_datas: MasterData[];
 }
 
 export interface MasterData {
@@ -142,9 +145,9 @@ export interface MasterData {
   created_by?: number;
   updated_by?: number;
 
-  masterCategory?: MasterCategory;
-  masterDataParent?: MasterData;
-  masterDataChildren: MasterData[];
+  master_category?: MasterCategory;
+  master_data_parent?: MasterData;
+  master_data_children: MasterData[];
 }
 
 export interface Parameter {

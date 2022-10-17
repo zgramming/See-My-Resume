@@ -13,19 +13,19 @@ import {
   TableColumnsType,
 } from "antd";
 import Search from "antd/lib/input/Search";
+import axios from "axios";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 import { EditOutlined } from "@ant-design/icons";
 
-import { AVAILABLE_ACCESS_MENU } from "../../../utils/constant";
-import { convertObjectIntoQueryParams } from "../../../utils/function";
-import axios from "axios";
-import useSWR from "swr";
 import {
   AppAccessMenu,
+  AppAccessModul,
   AppGroupUser,
-  AppModul,
 } from "../../../interface/main_interface";
+import { AVAILABLE_ACCESS_MENU } from "../../../utils/constant";
+import { convertObjectIntoQueryParams } from "../../../utils/function";
 
 interface DataSourceInterface {
   no: number;
@@ -45,16 +45,16 @@ const userGroupFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const modulFetcher = async (url: string, params: any) => {
+const accessibleModulFetcher = async (url: string, params: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
-  const { data, success }: { data: AppModul[]; success: boolean } =
+  const { data, success }: { data: AppAccessModul[]; success: boolean } =
     request.data;
-  return data;
+  return data ?? [];
 };
 
 const accessMenuFetcher = async (url: string, groupUserId: any) => {
-  const request = await axios.get(`${url}?app_group_user_id=${groupUserId}`);
+  const request = await axios.get(`${url}`);
   const { data, success }: { data: AppAccessMenu[]; success: boolean } =
     request.data;
   return data;
@@ -199,12 +199,14 @@ const FormModal = (props: {
 }) => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
-  const { data: dataModul } = useSWR(
-    [`${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/modul`],
-    modulFetcher
+  const { data: accessibleModul } = useSWR(
+    [
+      `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/access_modul/by_user_group/${props.row?.id}`,
+    ],
+    accessibleModulFetcher
   );
   const { data: dataAccessMenu } = useSWR(
-    [`${ApiURL}`, props.row?.id],
+    [`${ApiURL}/by_user_group/${props.row?.id}`],
     accessMenuFetcher
   );
 
@@ -225,6 +227,8 @@ const FormModal = (props: {
           allowed_access: allowedAccess,
         };
       });
+
+      console.log({ accessMenu: accessMenu });
       const response = await axios.post(`${ApiURL}`, {
         app_group_user_id: props.row?.id,
         access_menu: accessMenu,
@@ -256,7 +260,6 @@ const FormModal = (props: {
       const name = `access_menu|${val.app_modul_id}|${val.app_menu_id}`;
       form.setFieldValue(name, val.allowed_access);
     });
-
     return () => {};
   }, [dataAccessMenu, form, props.row]);
 
@@ -293,16 +296,16 @@ const FormModal = (props: {
           <Form.Item label="Group User" name="app_group_user_name">
             <Input placeholder="" disabled />
           </Form.Item>
-          {dataModul?.map((modul) => (
+          {accessibleModul?.map((accessModul) => (
             <Card
-              key={modul.id}
-              title={modul.name}
-              extra={
-                <Checkbox value="all" style={{ lineHeight: "32px" }}></Checkbox>
-              }
+              key={accessModul.id}
+              title={accessModul.app_modul?.name}
               className="mb-5"
+              // extra={
+              //   <Checkbox key={accessModul.id} value="all" style={{ lineHeight: "32px" }}></Checkbox>
+              // }
             >
-              {modul.menus.map((menu) => (
+              {accessModul.app_modul?.menus.map((menu, index) => (
                 <Card
                   key={menu.id}
                   title={menu.name}
@@ -316,13 +319,13 @@ const FormModal = (props: {
                 >
                   <Form.Item
                     label="Hak Akses Menu"
-                    name={`access_menu|${modul.id}|${menu.id}`}
+                    name={`access_menu|${accessModul.app_modul_id}|${menu.id}`}
                   >
                     <Checkbox.Group>
-                      {AVAILABLE_ACCESS_MENU.map((access) => {
+                      {AVAILABLE_ACCESS_MENU.map((access, index) => {
                         return (
                           <Checkbox
-                            key={access}
+                            key={`${access}_${menu.id}`}
                             value={access}
                             style={{ lineHeight: "32px" }}
                           >
@@ -335,7 +338,7 @@ const FormModal = (props: {
                 </Card>
               ))}
             </Card>
-          ))}
+          )) ?? <h1>LOADING...</h1>}
         </Form>
       </Spin>
     </Modal>

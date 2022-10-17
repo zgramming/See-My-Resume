@@ -103,7 +103,7 @@ const MasterDataPage = () => {
       key: "category",
       dataIndex: "category",
       title: "Kategori",
-      render: (val: MasterData) => val.masterCategory?.code,
+      render: (val: MasterData) => val.master_category?.code,
     },
     { key: "code", dataIndex: "code", title: "Kode" },
     { key: "name", dataIndex: "name", title: "Nama" },
