@@ -133,7 +133,7 @@ const AccessModulPage = () => {
         <div className="flex flex-col">
           <div className="flex justify-between items-center mb-5">
             <h1 className="font-medium text-base mr-5 md:text-xl">
-              User Group
+              Akses Modul
             </h1>
           </div>
           <div className="flex flex-wrap items-center space-x-2 mb-5">

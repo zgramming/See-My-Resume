@@ -316,7 +316,8 @@ const FormModal = (props: {
       job_id: props.row?.job_id ?? "",
       name: props.row?.name ?? "",
       code: props.row?.code ?? "",
-      birth_date: props.row?.birth_date  && moment(new Date(props.row.birth_date)),
+      birth_date:
+        props.row?.birth_date && moment(new Date(props.row.birth_date)),
       money: props.row?.money ?? "",
       description: props.row?.description ?? "",
       hobbies: props.row?.hobbies ?? "",

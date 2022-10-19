@@ -21,7 +21,7 @@ import { AppGroupUser, Users } from "../../../interface/main_interface";
 import useSWR from "swr";
 import axios from "axios";
 import { convertObjectIntoQueryParams } from "../../../utils/function";
-
+  
 interface DataSourceInterface {
   no: number;
   group_user: Users;
@@ -84,8 +84,7 @@ const UserPage = () => {
         });
         reloadUser();
       },
-      onCancel: async () => {
-      },
+      onCancel: async () => {},
     });
   };
 
