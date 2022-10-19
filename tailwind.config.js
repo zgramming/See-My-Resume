@@ -2,9 +2,6 @@
 
 console.log({
   message: "Tailwind.config.js loaded configuration",
-  config: {
-    primaryColor: process.env["NEXT_PUBLIC_TAILWIND_PRIMARY_COLOR"],
-  },
 });
 
 module.exports = {

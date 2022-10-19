@@ -41,7 +41,7 @@ const HeaderMenu = () => {
   );
 
   //TODO: Change from cookies [app_group_user_id]
-  const appGroupUserId = 9;
+  const appGroupUserId = 25;
   const {
     data: accessibleModul,
     error,
@@ -53,6 +53,7 @@ const HeaderMenu = () => {
     headerFetcher,
     {
       onSuccess: (data, key) => {
+        console.log({ data: data });
         const mapping = data.map((val, index) => {
           return getItem(
             val.app_modul?.pattern ?? "",
@@ -66,13 +67,12 @@ const HeaderMenu = () => {
     }
   );
 
-  	/// Listen every change route path name
-	useEffect(() => {
-		const path = currentPathHeaderHandler(pathname);
-		setCurrentPath(path);
-		return () => {
-		}
-	}, [pathname])
+  /// Listen every change route path name
+  useEffect(() => {
+    const path = currentPathHeaderHandler(pathname);
+    setCurrentPath(path);
+    return () => {};
+  }, [pathname]);
 
   return (
     <Header className="bg-white">

@@ -1,4 +1,4 @@
-const primaryColor = "#1572A1";
+const primaryColor = "#47B5FF";
 
 const AVAILABLE_ACCESS_MENU = [
   "add",

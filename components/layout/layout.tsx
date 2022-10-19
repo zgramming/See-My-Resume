@@ -11,11 +11,6 @@ import SiderMenu from "./sider_menu";
 const { Footer, Sider, Content } = Layout;
 
 const AdminLayout = (props: { children?: React.ReactNode }) => {
-  useEffect(() => {
-    console.log(props.children);
-    return () => {};
-  }, [props.children]);
-
   return (
     <Layout className="min-h-screen">
       <Sider

@@ -10,7 +10,6 @@ import NextNProgress from "nextjs-progressbar";
 import React, { ReactNode } from "react";
 
 import AdminLayout from "../components/layout/layout";
-import { primaryColor } from "../utils/constant";
 import { convertRoutePathToArray } from "../utils/function";
 
 const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
@@ -29,7 +28,11 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
 
   ConfigProvider.config({
     theme: {
-      primaryColor: primaryColor,
+      primaryColor: process.env["NEXT_PUBLIC_TAILWIND_PRIMARY_COLOR"],
+      errorColor: process.env["NEXT_PUBLIC_TAILWIND_ERROR_COLOR"],
+      infoColor: process.env["NEXT_PUBLIC_TAILWIND_INFO_COLOR"],
+      successColor: process.env["NEXT_PUBLIC_TAILWIND_SUCCESS_COLOR"],
+      warningColor: process.env["NEXT_PUBLIC_TAILWIND_WARNING_COLOR"],
     },
   });
 

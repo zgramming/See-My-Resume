@@ -1,3 +1,5 @@
+import { Button } from "antd";
+
 const LoginPage = () => {
   return (
     <section className="h-full gradient-form bg-gray-200 md:h-screen">
@@ -15,7 +17,7 @@ const LoginPage = () => {
                         alt="logo"
                       />
                       <h4 className="text-xl font-semibold mt-1 mb-12 pb-1">
-                        We are The Lotus Team
+                        SeeMyCV Management
                       </h4>
                     </div>
                     <form>
@@ -36,24 +38,9 @@ const LoginPage = () => {
                           placeholder="Password"
                         />
                       </div>
-                      <div className="text-center pt-1 mb-12 pb-1">
-                        <button
-                          className="inline-block px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
-                          type="button"
-                          data-mdb-ripple="true"
-                          data-mdb-ripple-color="light"
-                          style={{
-                            background: `linear-gradient(
-                            to right,
-                            #ee7724,
-                            #d8363a,
-                            #dd3675,
-                            #b44593
-                          )`,
-                          }}
-                        >
-                          Log in
-                        </button>
+                      <div className="flex flex-col text-center py-5 space-y-5 ">
+                        <Button type="primary">Login</Button>
+
                         <a className="text-gray-500" href="#!">
                           Forgot password?
                         </a>
@@ -72,12 +59,7 @@ const LoginPage = () => {
                     </form>
                   </div>
                 </div>
-                <div
-                  className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none"
-                  style={{
-                    background: `linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593)`,
-                  }}
-                >
+                <div className="bg-primary lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none">
                   <div className="text-white px-4 py-6 md:p-12 md:mx-6">
                     <div className="text-xl font-semibold mb-6">
                       We are more than just a company
