@@ -217,18 +217,25 @@ const FormModal = (props: {
       const accessMenuKeys = Object.keys(values).filter((val) =>
         val.includes("access_menu|")
       );
-      const accessMenu = accessMenuKeys.map((val, index) => {
-        const [name, modulId, menuId] = val.split("|");
-        const allowedAccess = values[`${val}`];
-        return {
-          app_group_user_id: props.row?.id,
-          app_menu_id: +menuId,
-          app_modul_id: +modulId,
-          allowed_access: allowedAccess,
-        };
-      });
 
-      console.log({ accessMenu: accessMenu });
+      /// Only get access menu not null or at least 1 access is checked
+      const accessMenu = accessMenuKeys
+        .filter((val, index) => {
+          const allowedAccess = values[`${val}`];
+          return allowedAccess != null;
+        })
+        .map((val, index) => {
+          const [name, modulId, menuId] = val.split("|");
+          const allowedAccess = values[`${val}`];
+          return {
+            app_group_user_id: props.row?.id,
+            app_menu_id: +menuId,
+            app_modul_id: +modulId,
+            allowed_access: allowedAccess,
+          };
+        });
+      console.log(accessMenu);
+
       const response = await axios.post(`${ApiURL}`, {
         app_group_user_id: props.row?.id,
         access_menu: accessMenu,
