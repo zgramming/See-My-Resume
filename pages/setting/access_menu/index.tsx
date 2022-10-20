@@ -219,22 +219,16 @@ const FormModal = (props: {
       );
 
       /// Only get access menu not null or at least 1 access is checked
-      const accessMenu = accessMenuKeys
-        .filter((val, index) => {
-          const allowedAccess = values[`${val}`];
-          return allowedAccess != null;
-        })
-        .map((val, index) => {
-          const [name, modulId, menuId] = val.split("|");
-          const allowedAccess = values[`${val}`];
-          return {
-            app_group_user_id: props.row?.id,
-            app_menu_id: +menuId,
-            app_modul_id: +modulId,
-            allowed_access: allowedAccess,
-          };
-        });
-      console.log(accessMenu);
+      const accessMenu = accessMenuKeys.map((val, index) => {
+        const [name, modulId, menuId] = val.split("|");
+        const allowedAccess = values[`${val}`];
+        return {
+          app_group_user_id: props.row?.id,
+          app_menu_id: +menuId,
+          app_modul_id: +modulId,
+          allowed_access: allowedAccess,
+        };
+      });
 
       const response = await axios.post(`${ApiURL}`, {
         app_group_user_id: props.row?.id,
@@ -247,6 +241,9 @@ const FormModal = (props: {
       });
       props.onCloseModal(true);
     } catch (e: any) {
+      console.log({
+        errorAccessMenu: e,
+      });
       const { message, code, status } = e?.response?.data || {};
       notification.error({
         duration: 0,
@@ -265,7 +262,7 @@ const FormModal = (props: {
 
     dataAccessMenu?.forEach((val, index) => {
       const name = `access_menu|${val.app_modul_id}|${val.app_menu_id}`;
-      form.setFieldValue(name, val.allowed_access);
+      form.setFieldValue(name, val.allowed_access ?? []);
     });
     return () => {};
   }, [dataAccessMenu, form, props.row]);

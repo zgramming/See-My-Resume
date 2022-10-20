@@ -1,64 +1,115 @@
-import { Menu } from 'antd';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { Menu } from "antd";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 
-import { PieChartOutlined } from '@ant-design/icons';
+import { PieChartOutlined } from "@ant-design/icons";
 
-import { getItem } from '../../interface/layout/menu_items_interface';
+import { getItem } from "../../interface/layout/menu_items_interface";
+import { AppAccessMenu, Users } from "../../interface/main_interface";
+import { baseAPIURL, keyLocalStorageLogin } from "../../utils/constant";
+
+const accessibleMenuFetcher = async (url: string, params?: any) => {
+  const request = await axios.get(`${url}`);
+  const { data, success }: { data: AppAccessMenu[]; success: boolean } =
+    request.data;
+
+  return data;
+};
+
+const currentPathHandler = (path: string): string => {
+  const [first, second, third] = path
+    .split("/")
+    .filter((route) => route.length !== 0);
+
+  /// We assume when `third` is undefined, this is sub menu
+  return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
+};
 
 const SiderMenu = (props: {}) => {
+  const { pathname, push } = useRouter();
 
-	const router = useRouter();
+  const [currentPath, setCurrentPath] = useState(currentPathHandler(pathname));
+  const [user, setUser] = useState<Users | undefined>();
+  const [items, setItems] = useState<ItemType[]>([]);
 
-	const currentPathHandler = (path: string): string => {
-		const [first, second, third] = path.split('/').filter(route => route.length !== 0);
+  const { data: dataAccessibleMenu, error: errorAccessibleMenu } = useSWR(
+    [
+      `${baseAPIURL}/setting/access_menu/by_user_group/${user?.app_group_user_id}`,
+    ],
+    accessibleMenuFetcher,
+    {
+      onSuccess: (data, key) => {
+        const mapping = data.map((val, index) => {
+          return getItem(
+            val.app_menu.route,
+            val.app_menu.name,
+            <PieChartOutlined />
+          );
+        });
 
-		/// We assume when `third` is undefined, this is sub menu
-		return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
-	}
+        setItems(mapping);
+      },
+    }
+  );
 
-	const [currentPath, setCurrentPath] = useState(currentPathHandler(router.pathname));
+  /// Listen every change route path name
+  useEffect(() => {
+    const path = currentPathHandler(pathname);
+    setCurrentPath(path);
+    return () => {};
+  }, [pathname]);
 
-	const sideItems = [
-		getItem('/setting/user_group', 'Management Group User', <PieChartOutlined />),
-		getItem('/setting/user', 'Management User', <PieChartOutlined />),
-		getItem('/setting/modul', 'Modul', <PieChartOutlined />),
-		getItem('/setting/menu', 'Menu', <PieChartOutlined />),
-		getItem('/setting/access_modul', 'Access Modul', <PieChartOutlined />),
-		getItem('/setting/access_menu', 'Access Menu', <PieChartOutlined />),
-		getItem('/setting/master_category', 'Master Kategori', <PieChartOutlined />),
-		getItem('/setting/documentation', 'Dokumentasi', <PieChartOutlined />),
-		getItem('/setting/parameter', 'Parameter', <PieChartOutlined />),
-		getItem('?/setting/parent', 'Parent Menu', <PieChartOutlined />, [
-			getItem('/setting/parent/child_first', 'Child 1'),
-			getItem('/setting/parent/child_second', 'Child 2'),
-		]),
-	];
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      setUser(JSON.parse(localStorage.getItem(keyLocalStorageLogin) ?? ""));
+    }
+    return () => {};
+  }, []);
 
-	/// Listen every change route path name
-	useEffect(() => {
-		const path = currentPathHandler(router.pathname);
-		setCurrentPath(path);
-		return () => {
-		}
-	}, [router.pathname])
+  return (
+    <Menu
+      theme="light"
+      mode="inline"
+      items={items}
+      selectedKeys={[currentPath]}
+      onClick={(e) => {
+        /// Jangan lakukan push jika character pertama === "?"
+        /// Ini dilakukan untuk meng-akomodir sub menu
+        if (e.key[0] === "?") return false;
 
-	return <Menu
-		theme="light"
-		mode="inline"
-		items={sideItems}
-		selectedKeys={[currentPath]}
-		onClick={(e) => {
-
-			/// Jangan lakukan push jika character pertama === "?"
-			/// Ini dilakukan untuk meng-akomodir sub menu
-			if (e.key[0] === "?") return false;
-
-			const path = currentPathHandler(e.key);
-			setCurrentPath(path);
-			router.push(path);
-		}}
-	/>
-}
+        const path = currentPathHandler(e.key);
+        setCurrentPath(path);
+        push(path);
+      }}
+    />
+  );
+};
 
 export default SiderMenu;
+
+//   const sideItems = [
+//     getItem(
+//       "/setting/user_group",
+//       "Management Group User",
+//       <PieChartOutlined />
+//     ),
+//     getItem("/setting/user", "Management User", <PieChartOutlined />),
+//     getItem("/setting/modul", "Modul", <PieChartOutlined />),
+//     getItem("/setting/menu", "Menu", <PieChartOutlined />),
+//     getItem("/setting/access_modul", "Access Modul", <PieChartOutlined />),
+//     getItem("/setting/access_menu", "Access Menu", <PieChartOutlined />),
+//     getItem(
+//       "/setting/master_category",
+//       "Master Kategori",
+//       <PieChartOutlined />
+//     ),
+//     getItem("/setting/documentation", "Dokumentasi", <PieChartOutlined />),
+//     getItem("/setting/parameter", "Parameter", <PieChartOutlined />),
+//     getItem("?/setting/parent", "Parent Menu", <PieChartOutlined />, [
+//       getItem("/setting/parent/child_first", "Child 1"),
+//       getItem("/setting/parent/child_second", "Child 2"),
+//     ]),
+//   ];

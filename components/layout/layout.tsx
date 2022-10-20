@@ -18,10 +18,10 @@ const AdminLayout = (props: { children?: React.ReactNode }) => {
         breakpoint="lg"
         collapsedWidth="0"
         onBreakpoint={(broken) => {
-          console.log(broken);
+          // console.log(broken);
         }}
         onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
+          // console.log(collapsed, type);
         }}
       >
         <div className="relative h-16 flex justify-center items-center">
