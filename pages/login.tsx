@@ -1,7 +1,8 @@
 import { Button, Form, Input, notification, Spin } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { setCookie, destroyCookie } from "nookies";
+import { useEffect, useState } from "react";
 import { baseAPIURL, keyLocalStorageLogin } from "../utils/constant";
 
 const LoginPage = () => {
@@ -22,6 +23,7 @@ const LoginPage = () => {
 
       /// Save to localstorage
       localStorage.setItem(keyLocalStorageLogin, JSON.stringify(user));
+      setCookie(null, keyLocalStorageLogin, JSON.stringify(user));
       replace(route);
     } catch (e: any) {
       console.log({
