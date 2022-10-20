@@ -1,83 +1,92 @@
-import { Button } from "antd";
+import { Button, Form, Input, notification, Spin } from "antd";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { baseAPIURL, keyLocalStorageLogin } from "../utils/constant";
 
 const LoginPage = () => {
-  return (
-    <section className="h-full gradient-form bg-gray-200 md:h-screen">
-      <div className="h-full ">
-        <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
-          <div className="xl:w-10/12">
-            <div className="block bg-white shadow-lg rounded-lg">
-              <div className="lg:flex lg:flex-wrap g-0">
-                <div className="lg:w-6/12 px-4 md:px-0">
-                  <div className="md:p-12 md:mx-6">
-                    <div className="text-center">
-                      <img
-                        className="mx-auto w-48"
-                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
-                        alt="logo"
-                      />
-                      <h4 className="text-xl font-semibold mt-1 mb-12 pb-1">
-                        SeeMyCV Management
-                      </h4>
-                    </div>
-                    <form>
-                      <p className="mb-4">Please login to your account</p>
-                      <div className="mb-4">
-                        <input
-                          type="text"
-                          className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                          id="exampleFormControlInput1"
-                          placeholder="Username"
-                        />
-                      </div>
-                      <div className="mb-4">
-                        <input
-                          type="password"
-                          className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                          id="exampleFormControlInput1"
-                          placeholder="Password"
-                        />
-                      </div>
-                      <div className="flex flex-col text-center py-5 space-y-5 ">
-                        <Button type="primary">Login</Button>
+  const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const { replace } = useRouter();
+  const onFinish = async () => {
+    try {
+      setIsLoading(true);
+      const values = await form.validateFields();
+      const response = await axios.post(`${baseAPIURL}/login`, values);
+      const { success, message, data } = response.data;
+      const { user, route } = data;
+      notification.success({
+        message: "Success",
+        description: message,
+      });
 
-                        <a className="text-gray-500" href="#!">
-                          Forgot password?
-                        </a>
-                      </div>
-                      <div className="flex items-center justify-between pb-6">
-                        <p className="mb-0 mr-2">Dont have an account?</p>
-                        <button
-                          type="button"
-                          className="inline-block px-6 py-2 border-2 border-red-600 text-red-600 font-medium text-xs leading-tight uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-                          data-mdb-ripple="true"
-                          data-mdb-ripple-color="light"
-                        >
-                          Danger
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div className="bg-primary lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none">
-                  <div className="text-white px-4 py-6 md:p-12 md:mx-6">
-                    <div className="text-xl font-semibold mb-6">
-                      We are more than just a company
-                    </div>
-                    <p className="text-sm">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                  </div>
-                </div>
-              </div>
+      /// Save to localstorage
+      localStorage.setItem(keyLocalStorageLogin, JSON.stringify(user));
+      replace(route);
+    } catch (e: any) {
+      console.log({
+        errorLogin: e,
+      });
+      const { message, code, status } = e?.response?.data || {};
+      notification.error({
+        duration: 0,
+        message: "Error",
+        description: message || "Unknown Error Message",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return (
+    <Spin spinning={isLoading}>
+      <section className="min-h-screen flex flex-col justify-center bg-gray-200">
+        <div className="flex flex-col lg:flex-row px-10">
+          <div className="bg-white px-10 lg:basis-1/2">
+            <div className="text-center">
+              <img
+                className="mx-auto w-48"
+                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
+                alt="logo"
+              />
+              <h4 className="text-xl font-semibold mt-1 mb-12 pb-1">
+                SeeMyCV Management
+              </h4>
             </div>
+            <Form
+              form={form}
+              name="form_validation"
+              id="form_validation"
+              layout="vertical"
+              onFinish={onFinish}
+            >
+              <p className="mb-4 text-start">Please login to your account</p>
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[{ required: true }]}
+              >
+                <Input name="username" placeholder="Input username" />
+              </Form.Item>
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true }]}
+              >
+                <Input.Password name="password" placeholder="Input password" />
+              </Form.Item>
+              <div className="flex flex-col text-center py-5 space-y-5 ">
+                <Button type="primary" size="large" htmlType="submit">
+                  Login
+                </Button>
+              </div>
+            </Form>
+          </div>
+          <div className="hidden lg:flex flex-col justify-center items-center rounded-tr-lg rounded-br-lg bg-primary lg:basis-1/2">
+            <h1>DISINI BACKGROUND IMAGE</h1>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </Spin>
   );
 };
 

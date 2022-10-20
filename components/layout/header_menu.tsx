@@ -6,16 +6,11 @@ import { PieChartOutlined } from "@ant-design/icons";
 import { getItem } from "../../interface/layout/menu_items_interface";
 import useSWR from "swr";
 import axios from "axios";
-import {
-  AppAccessModul,
-  AppGroupUser,
-  AppModul,
-} from "../../interface/main_interface";
+import { AppAccessModul, Users } from "../../interface/main_interface";
 import { useEffect, useState } from "react";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import { useRouter } from "next/router";
-
-const headerItems = [getItem("/setting", "Setting", <PieChartOutlined />)];
+import { keyLocalStorageLogin } from "../../utils/constant";
 
 const headerFetcher = async (url: string, params?: any) => {
   const request = await axios.get(`${url}`);
@@ -35,13 +30,14 @@ const HeaderMenu = () => {
     return `/${first}`;
   };
 
+  const [user, setUser] = useState<Users | undefined>();
   const [items, setItems] = useState<ItemType[]>([]);
   const [currentPath, setCurrentPath] = useState(
     currentPathHeaderHandler(pathname)
   );
 
   //TODO: Change from cookies [app_group_user_id]
-  const appGroupUserId = 25;
+  const appGroupUserId = user?.app_group_user_id;
   const {
     data: accessibleModul,
     error,
@@ -53,7 +49,6 @@ const HeaderMenu = () => {
     headerFetcher,
     {
       onSuccess: (data, key) => {
-        console.log({ data: data });
         const mapping = data.map((val, index) => {
           return getItem(
             val.app_modul?.pattern ?? "",
@@ -73,6 +68,12 @@ const HeaderMenu = () => {
     setCurrentPath(path);
     return () => {};
   }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window !== undefined)
+      setUser(JSON.parse(localStorage.getItem(keyLocalStorageLogin) ?? ""));
+    return () => {};
+  }, []);
 
   return (
     <Header className="bg-white">

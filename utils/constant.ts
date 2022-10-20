@@ -1,6 +1,7 @@
-const primaryColor = "#47B5FF";
-
-const AVAILABLE_ACCESS_MENU = [
+export const primaryColor = "#47B5FF";
+export const baseAPIURL = process.env.NEXT_PUBLIC_BASEAPIURL;
+export const keyLocalStorageLogin = "user_local_storage";
+export const AVAILABLE_ACCESS_MENU = [
   "add",
   "edit",
   "delete",
@@ -9,5 +10,3 @@ const AVAILABLE_ACCESS_MENU = [
   "print",
   "approve",
 ];
-
-export { primaryColor, AVAILABLE_ACCESS_MENU };
