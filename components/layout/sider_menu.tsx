@@ -11,8 +11,8 @@ import { getItem } from "../../interface/layout/menu_items_interface";
 import { AppAccessMenu, Users } from "../../interface/main_interface";
 import { baseAPIURL, keyLocalStorageLogin } from "../../utils/constant";
 
-const accessibleMenuFetcher = async (url: string, params?: any) => {
-  const request = await axios.get(`${url}`);
+const accessibleMenuFetcher = async (url: string, route?: any) => {
+  const request = await axios.get(`${url}`, { params: { route } });
   const { data, success }: { data: AppAccessMenu[]; success: boolean } =
     request.data;
 
@@ -29,7 +29,7 @@ const currentPathHandler = (path: string): string => {
 };
 
 const SiderMenu = (props: {}) => {
-  const { pathname, push } = useRouter();
+  const { pathname, push, isReady, route } = useRouter();
 
   const [currentPath, setCurrentPath] = useState(currentPathHandler(pathname));
   const [user, setUser] = useState<Users | undefined>();
@@ -37,7 +37,10 @@ const SiderMenu = (props: {}) => {
 
   const { data: dataAccessibleMenu, error: errorAccessibleMenu } = useSWR(
     [
-      `${baseAPIURL}/setting/access_menu/by_user_group/${user?.app_group_user_id}`,
+      `${baseAPIURL}/setting/access_menu/by_user_group/${
+        user?.app_group_user_id ?? 0
+      }`,
+      route,
     ],
     accessibleMenuFetcher,
     {

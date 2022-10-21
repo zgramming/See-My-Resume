@@ -36,15 +36,15 @@ const HeaderMenu = () => {
     currentPathHeaderHandler(pathname)
   );
 
-  //TODO: Change from cookies [app_group_user_id]
-  const appGroupUserId = user?.app_group_user_id;
   const {
     data: accessibleModul,
     error,
     mutate,
   } = useSWR(
     [
-      `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/access_modul/by_user_group/${appGroupUserId}`,
+      `${
+        process.env.NEXT_PUBLIC_BASEAPIURL
+      }/setting/access_modul/by_user_group/${user?.app_group_user_id ?? 0}`,
     ],
     headerFetcher,
     {
