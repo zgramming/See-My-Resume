@@ -1,5 +1,4 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { parseCookies, destroyCookie } from "nookies";
 
 import { keyLocalStorageLogin } from "./utils/constant";
 
@@ -16,7 +15,6 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
   const accessToken = request.cookies.get(keyLocalStorageLogin);
   /// Check apakah url sekarang termaksud kedalam url yang tidak diikut sertakan pengecekan token
   if (excludePathCheckingToken(url)) {
-    console.log({ exclude: url });
     return NextResponse.next();
   }
 

@@ -42,13 +42,34 @@ const SiderMenu = (props: {}) => {
     accessibleMenuFetcher,
     {
       onSuccess: (data, key) => {
-        const mapping = data.map((val, index) => {
-          return getItem(
-            val.app_menu.route,
-            val.app_menu.name,
-            <PieChartOutlined />
-          );
+        const mapping = data.map((menu, index) => {
+          /// Kondisi ketika menu punya parent
+          if (menu.app_menu.route.startsWith("?")) {
+            const children = menu.app_menu.menu_childrens.map((child) =>
+              getItem(child.route, child.name, <PieChartOutlined />)
+            );
+
+            const result = getItem(
+              menu.app_menu.route,
+              menu.app_menu.name,
+              <PieChartOutlined />,
+              children
+            );
+            return result;
+          } else {
+            /// Kondisi ketika menu tidak punya parent
+
+            /// Check apakah dalam kondisi ini, terdapat menu yang punya parent
+            /// Jika ada return null, karena asumsi kita menu ini hanya satu tingkat
+            if (menu.app_menu.app_menu_id_parent) return null;
+            return getItem(
+              menu.app_menu.route,
+              menu.app_menu.name,
+              <PieChartOutlined />
+            );
+          }
         });
+        console.log({ mapping: mapping });
 
         setItems(mapping);
       },
