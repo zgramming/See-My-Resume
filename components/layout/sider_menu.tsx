@@ -1,15 +1,16 @@
-import { Menu } from "antd";
+import { Button, Menu } from "antd";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
-import { PieChartOutlined } from "@ant-design/icons";
+import { LogoutOutlined, PieChartOutlined } from "@ant-design/icons";
 
 import { getItem } from "../../interface/layout/menu_items_interface";
 import { AppAccessMenu, Users } from "../../interface/main_interface";
 import { baseAPIURL, keyLocalStorageLogin } from "../../utils/constant";
+import { destroyCookie } from "nookies";
 
 const accessibleMenuFetcher = async (url: string, route?: any) => {
   const request = await axios.get(`${url}`, { params: { route } });
@@ -29,7 +30,7 @@ const currentPathHandler = (path: string): string => {
 };
 
 const SiderMenu = (props: {}) => {
-  const { pathname, push, isReady, route } = useRouter();
+  const { pathname, push, replace, route } = useRouter();
 
   const [currentPath, setCurrentPath] = useState(currentPathHandler(pathname));
   const [user, setUser] = useState<Users | undefined>();
@@ -72,8 +73,6 @@ const SiderMenu = (props: {}) => {
             );
           }
         });
-        console.log({ mapping: mapping });
-
         setItems(mapping);
       },
     }
@@ -94,21 +93,36 @@ const SiderMenu = (props: {}) => {
   }, []);
 
   return (
-    <Menu
-      theme="light"
-      mode="inline"
-      items={items}
-      selectedKeys={[currentPath]}
-      onClick={(e) => {
-        /// Jangan lakukan push jika character pertama === "?"
-        /// Ini dilakukan untuk meng-akomodir sub menu
-        if (e.key[0] === "?") return false;
+    <div className="flex flex-col">
+      <Menu
+        theme="light"
+        mode="inline"
+        items={items}
+        selectedKeys={[currentPath]}
+        onClick={(e) => {
+          /// Jangan lakukan push jika character pertama === "?"
+          /// Ini dilakukan untuk meng-akomodir sub menu
+          if (e.key[0] === "?") return false;
 
-        const path = currentPathHandler(e.key);
-        setCurrentPath(path);
-        push(path);
-      }}
-    />
+          const path = currentPathHandler(e.key);
+          setCurrentPath(path);
+          push(path);
+        }}
+      />
+      <Button
+        type="primary"
+        htmlType="button"
+        className="m-5"
+        icon={<LogoutOutlined />}
+        danger
+        onClick={async (e) => {
+          destroyCookie(null, keyLocalStorageLogin);
+          replace("/login");
+        }}
+      >
+        Logout
+      </Button>
+    </div>
   );
 };
 
