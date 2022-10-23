@@ -5,15 +5,15 @@ export interface CVProfileInterface {
   users_id: number;
   name: string;
   motto: string;
-  description: null;
-  phone: null;
-  email: null;
-  web: null;
-  address: null;
-  image: null;
+  description?: string;
+  phone?: string;
+  email?: string;
+  web?: string;
+  address?: string;
+  image?: string;
   created_at: Date;
   updated_at: Date;
-  created_by: null;
-  updated_by: null;
+  created_by?: any;
+  updated_by?: any;
   user: Users;
 }

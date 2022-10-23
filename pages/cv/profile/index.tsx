@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Card,
   Form,
@@ -7,7 +8,6 @@ import {
   Space,
   Spin,
   Upload,
-  UploadProps,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import axios from "axios";
@@ -21,6 +21,8 @@ import { CVProfileInterface } from "../../../interface/cv/cvprofile_interface";
 import { baseAPIURL } from "../../../utils/constant";
 import { regexPhone } from "../../../utils/regex";
 
+import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
+
 const profileFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);
   const {
@@ -33,7 +35,7 @@ const profileFetcher = async (url: string) => {
 const ProfilePage = () => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<RcFile[]>([]);
   const userLogin = useUserLogin();
 
   const {
@@ -65,21 +67,11 @@ const ProfilePage = () => {
       const url = baseAPIURL + `/cv/profile`;
 
       const formData = new FormData();
-
-      for (const key in values) {
-        formData.append(key, values[key]);
-      }
+      for (const key in values) formData.append(key, values[key]);
       formData.append("users_id", `${userLogin?.id}`);
-      if (files.length !== 0) {
-        formData.delete("image");
-        formData.append("image", files[0]);
-      }
+      formData.append("image", files[0]);
 
-      const response = await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(url, formData);
       const { data, success, message } = response.data;
       notification.success({
         message: "Success",
@@ -121,34 +113,21 @@ const ProfilePage = () => {
   const propsUploadImage: UploadProps = {
     maxCount: 1,
     accept: ".jpg, .png, .jpeg",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+    /// Set Default image
+    ...(dataProfile &&
+      {
+        // fileList: [
+        //   {
+        //     uid: dataProfile.id,
+        //     name: "image123.png",
+        //     status: "done",
+        //     url: dataProfile.image,
+        //   },
+        // ],
+      }),
 
     async beforeUpload(file, FileList) {
-      if (FileList.length !== 0) {
-        try {
-          const buffer = await FileList[0].arrayBuffer();
-          const blob = new Blob([buffer]);
-          const file = new File([blob], "image");
-          // alert(file);
-          setFiles([file]);
-        } catch (error) {
-          console.log({
-            error_upload_image: error,
-          });
-        }
-      }
-      // const reader = new FileReader();
-      // reader.onload = (e) => {
-      //   const buffer = e.target?.result as ArrayBuffer;
-      //   const blob = new Blob([buffer]);
-      //   const file = new File([blob], "image");
-      //   console.log(e.target?.result)
-      //   // setFile(e.target?.result);
-      //   // setFile(`${e.target?.result}`);
-      // };
-      // reader.readAsArrayBuffer(file);
+      setFiles([file]);
 
       // Prevent upload
       return false;
@@ -173,13 +152,15 @@ const ProfilePage = () => {
             </Space>
           </div>
           <Form
-            encType="multipart/form-data"
             form={form}
             name="form_validation"
             id="form_validation"
             layout="vertical"
             onFinish={onFinish}
           >
+            <div className="flex flex-row justify-center">
+              <Avatar src={dataProfile?.image} className="w-52 h-52" />
+            </div>
             <Form.Item label="Name" name="name">
               <Input name="name" placeholder="Masukkan namamu" />
             </Form.Item>
