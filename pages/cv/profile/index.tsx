@@ -67,10 +67,12 @@ const ProfilePage = () => {
       const url = baseAPIURL + `/cv/profile`;
 
       const formData = new FormData();
-      for (const key in values) formData.append(key, values[key]);
+      for (const key in values) {
+        if (values[key]) formData.append(key, values[key]);
+      }
+
       formData.append("users_id", `${userLogin?.id}`);
       formData.append("image", files[0]);
-
       const response = await axios.post(url, formData);
       const { data, success, message } = response.data;
       notification.success({
@@ -114,20 +116,10 @@ const ProfilePage = () => {
     maxCount: 1,
     accept: ".jpg, .png, .jpeg",
     /// Set Default image
-    ...(dataProfile &&
-      {
-        // fileList: [
-        //   {
-        //     uid: dataProfile.id,
-        //     name: "image123.png",
-        //     status: "done",
-        //     url: dataProfile.image,
-        //   },
-        // ],
-      }),
+    ...(dataProfile && {}),
 
     async beforeUpload(file, FileList) {
-      setFiles([file]);
+      setFiles(FileList);
 
       // Prevent upload
       return false;
@@ -161,13 +153,17 @@ const ProfilePage = () => {
             <div className="flex flex-row justify-center">
               <Avatar src={dataProfile?.image} className="w-52 h-52" />
             </div>
-            <Form.Item label="Name" name="name">
+            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
               <Input name="name" placeholder="Masukkan namamu" />
             </Form.Item>
-            <Form.Item label="Motto" name="motto">
+            <Form.Item label="Motto" name="motto" rules={[{ required: true }]}>
               <TextArea rows={4} />
             </Form.Item>
-            <Form.Item label="Deskripsi" name="description">
+            <Form.Item
+              label="Deskripsi"
+              name="description"
+              rules={[{ required: true }]}
+            >
               <TextArea rows={4} />
             </Form.Item>
             <Form.Item

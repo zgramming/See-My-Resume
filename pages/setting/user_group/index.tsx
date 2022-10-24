@@ -46,15 +46,12 @@ const GroupUserPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [row, setRow] = useState<AppGroupUser | undefined>(undefined);
   const [queryParam, setQueryParam] = useState<{
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     code?: string;
     name?: string;
     status?: string;
-  }>({
-    limit: 10,
-    offset: 0,
-  });
+  }>();
 
   const {
     data: dataUserGroup,
@@ -178,7 +175,7 @@ const GroupUserPage = () => {
             scroll={{ x: 2000 }}
             pagination={{
               total: dataSource.length,
-              pageSize: queryParam.limit,
+              pageSize: queryParam?.limit,
               showSizeChanger: true,
               onShowSizeChange: (current, size) => {
                 setQueryParam((val) => {

@@ -58,16 +58,13 @@ const MenuPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [row, setRow] = useState<AppMenu | undefined>(undefined);
   const [queryParam, setQueryParam] = useState<{
-    limit: number;
-    offset: number;
+    limit?: number;
+    offset?: number;
     app_modul_id?: number;
     code?: string;
     name?: string;
     status?: string;
-  }>({
-    limit: 10,
-    offset: 0,
-  });
+  }>();
 
   const {
     data: dataMenu,
@@ -202,7 +199,7 @@ const MenuPage = () => {
           scroll={{ x: 2000 }}
           pagination={{
             total: dataSource.length,
-            pageSize: queryParam.limit,
+            pageSize: queryParam?.limit,
             showSizeChanger: true,
             onShowSizeChange: (current, size) => {
               setQueryParam((val) => {
