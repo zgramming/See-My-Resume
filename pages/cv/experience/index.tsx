@@ -35,6 +35,7 @@ import { CVExperienceInterface } from "../../../interface/cv/cvexperience_interf
 import { baseAPIURL } from "../../../utils/constant";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 interface DataSourceInterface {
   no: number;
   job: string;
@@ -113,7 +114,24 @@ const ExperiencePage = () => {
     { key: "start_date", dataIndex: "start_date", title: "Mulai" },
     { key: "end_date", dataIndex: "end_date", title: "Selesai" },
     { key: "image", dataIndex: "image", title: "Gambar" },
-    { key: "tags", dataIndex: "tags", title: "Tags" },
+    {
+      key: "tags",
+      dataIndex: "tags",
+      title: "Tags",
+      render(value, record, index) {
+        const tags = value ? (JSON.parse(value) as string[]) : [];
+
+        return (
+          <div className="flex flex-row flex-wrap">
+            {tags.map((val) => (
+              <Tag key={val + index} color="green" className="mb-1">
+                {val}
+              </Tag>
+            ))}
+          </div>
+        );
+      },
+    },
     { key: "created_at", dataIndex: "created_at", title: "Created At" },
     { key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },
     {
