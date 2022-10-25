@@ -13,9 +13,12 @@ import {
   Spin,
   Table,
   TableColumnsType,
+  Tag,
 } from "antd";
 import Search from "antd/lib/input/Search";
+import Upload from "antd/lib/upload";
 import axios from "axios";
+import moment from "moment";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -30,8 +33,6 @@ import {
 import useUserLogin from "../../../hooks/use_userlogin";
 import { CVExperienceInterface } from "../../../interface/cv/cvexperience_interface";
 import { baseAPIURL } from "../../../utils/constant";
-import Upload, { RcFile } from "antd/lib/upload";
-import moment from "moment";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 interface DataSourceInterface {
@@ -41,7 +42,7 @@ interface DataSourceInterface {
   start_date: string;
   end_date: string;
   image?: string;
-  tags?: string[];
+  tags?: string;
   created_at: string;
   updated_at: string;
   action: CVExperienceInterface;
@@ -213,8 +214,10 @@ const FormModal = (props: {
 
   const [formState, setFormState] = useState<{
     is_graduated?: boolean;
+    tags: string[];
   }>({
     is_graduated: props.row?.is_graduated ?? false,
+    tags: props.row?.tags ? JSON.parse(props.row.tags) : [],
   });
 
   const onFinish = async () => {
@@ -229,8 +232,9 @@ const FormModal = (props: {
       if (props.row) formData.append("id", props.row.id);
       formData.append("users_id", `${userLogin?.id}`);
       formData.append("is_graduated", formState.is_graduated ? "1" : "0");
+      formData.append("tags", JSON.stringify(formState.tags ?? []));
       if (values.image_company)
-        formData.append("image_company", values.image_company.fileList[0]);
+        formData.append("image_company", values.image_company.file);
 
       const response = await axios.post(
         `${baseAPIURL}/cv/experience`,
@@ -382,12 +386,61 @@ const FormModal = (props: {
               name="description"
               rules={[{ required: true }]}
             >
-              <ReactQuill
-                // placeholder="Deskripsikan Pengalaman kamu"
-                theme="snow"
-              />
+              <ReactQuill theme="snow" />
             </Form.Item>
           )}
+
+          <div className="flex flex-col">
+            <Form.Item
+              name={"tags"}
+              label="Tags"
+              help="Comma untuk membuat tag"
+            >
+              <Input
+                placeholder="Masukkan tags"
+                onKeyUp={(e) => {
+                  /// 9 Tab, 188 comma, 32 space
+                  const triggerTagsKeyboard = ["Comma"];
+                  const val = (e.target as HTMLInputElement).value;
+                  if (
+                    triggerTagsKeyboard.includes(e.code) &&
+                    val.trim().length !== 0
+                  ) {
+                    e.preventDefault();
+                    form.setFieldValue("tags", undefined);
+                    setFormState((prevState) => {
+                      return {
+                        ...prevState,
+                        tags: [...(prevState?.tags ?? []), val.slice(0, -1)],
+                      };
+                    });
+                  }
+                }}
+              />
+            </Form.Item>
+            <div className="flex flex-row flex-wrap my-2">
+              {formState.tags.length != 0 &&
+                formState.tags.map((tag, index) => (
+                  <Tag
+                    key={tag + index}
+                    color="green"
+                    className="mb-1 text-base"
+                    onClose={(e) =>
+                      setFormState((prevState) => {
+                        const tags = [
+                          ...(prevState?.tags?.filter((val) => val !== tag) ??
+                            []),
+                        ];
+                        return { ...prevState, tags };
+                      })
+                    }
+                    closable
+                  >
+                    {tag}
+                  </Tag>
+                ))}
+            </div>
+          </div>
         </Form>
       </Spin>
     </Modal>

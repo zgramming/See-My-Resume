@@ -10,7 +10,7 @@ export interface CVExperienceInterface {
   description: string;
   image_company?: string;
   is_graduated: boolean;
-  tags?: string[];
+  tags?: string;
   created_at: Date;
   updated_at: Date;
   created_by: any;
