@@ -108,7 +108,21 @@ const PortfolioPage = () => {
     { key: "no", dataIndex: "no", title: "No" },
     { key: "title", dataIndex: "title", title: "Judul" },
     { key: "slug", dataIndex: "slug", title: "Slug" },
-    { key: "tags", dataIndex: "tags", title: "Tags" },
+    {
+      key: "tags",
+      dataIndex: "tags",
+      title: "Tags",
+      width: 300,
+      render(value, record, index) {
+        if (!record.tags) return <></>;
+        const parseTags: string[] = JSON.parse(record.tags);
+        return parseTags.map((val) => (
+          <Tag key={val} color="green" className="my-1">
+            {val}
+          </Tag>
+        ));
+      },
+    },
     {
       key: "thumbnail",
       dataIndex: "thumbnail",
@@ -426,6 +440,23 @@ const FormModal = (props: {
           </div>
 
           <div className="flex flex-col space-y-5">
+            <div className="flex flex-row justify-between items-center ">
+              <div className="text-lg font-semibold">Sosial Media</div>
+              <Button
+                type="ghost"
+                icon={<PlusOutlined />}
+                onClick={(e) => {
+                  setFormState((prevState) => {
+                    return {
+                      ...prevState,
+                      urls: [...prevState.urls, uuidv4()],
+                    };
+                  });
+                }}
+              >
+                Tambah URL
+              </Button>
+            </div>
             <div>
               {formState.urls.map((val, index: number) => {
                 const url = props.row?.urls.find((url) => url.id == val);
@@ -472,22 +503,6 @@ const FormModal = (props: {
                   </Row>
                 );
               })}
-            </div>
-            <div className="self-end">
-              <Button
-                type="ghost"
-                icon={<PlusOutlined />}
-                onClick={(e) => {
-                  setFormState((prevState) => {
-                    return {
-                      ...prevState,
-                      urls: [...prevState.urls, uuidv4()],
-                    };
-                  });
-                }}
-              >
-                Tambah URL
-              </Button>
             </div>
           </div>
         </Form>

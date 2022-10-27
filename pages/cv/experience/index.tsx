@@ -33,6 +33,7 @@ import {
 import useUserLogin from "../../../hooks/use_userlogin";
 import { CVExperienceInterface } from "../../../interface/cv/cvexperience_interface";
 import { baseAPIURL } from "../../../utils/constant";
+import Image from "next/image";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -42,7 +43,7 @@ interface DataSourceInterface {
   company: string;
   start_date: string;
   end_date: string;
-  image?: string;
+  image_company?: string;
   tags?: string;
   created_at: string;
   updated_at: string;
@@ -99,7 +100,7 @@ const ExperiencePage = () => {
         company: val.company,
         start_date: new Date(val.start_date).toDateString(),
         end_date: new Date(val.end_date).toDateString(),
-        image: val.image_company,
+        image_company: val.image_company,
         tags: val.tags,
         created_at: new Date(val.created_at).toDateString(),
         updated_at: new Date(val.updated_at).toDateString(),
@@ -113,7 +114,22 @@ const ExperiencePage = () => {
     { key: "job", dataIndex: "job", title: "Pekerjaan" },
     { key: "start_date", dataIndex: "start_date", title: "Mulai" },
     { key: "end_date", dataIndex: "end_date", title: "Selesai" },
-    { key: "image", dataIndex: "image", title: "Gambar" },
+    {
+      key: "image_company",
+      dataIndex: "image_company",
+      title: "Gambar",
+      render(value, record, index) {
+        if (!record.image_company) return <div>-</div>;
+        return (
+          <Image
+            src={record.image_company}
+            alt="Failed load image"
+            width={100}
+            height={100}
+          />
+        );
+      },
+    },
     {
       key: "tags",
       dataIndex: "tags",

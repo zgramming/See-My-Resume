@@ -22,6 +22,7 @@ import {
 import Search from "antd/lib/input/Search";
 import axios from "axios";
 import moment from "moment";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import useUserLogin from "../../../hooks/use_userlogin";
@@ -103,7 +104,7 @@ const EducationPage = () => {
   const columns: TableColumnsType<DataSourceInterface> = [
     { key: "no", dataIndex: "no", title: "No" },
     { key: "name", dataIndex: "name", title: "Nama" },
-    { key: "major", dataIndex: "major", title: "Major" },
+    { key: "major", dataIndex: "major", title: "Jurusan" },
     {
       key: "field_of_study",
       dataIndex: "field_of_study",
@@ -111,7 +112,22 @@ const EducationPage = () => {
     },
     { key: "start_date", dataIndex: "start_date", title: "Mulai" },
     { key: "end_date", dataIndex: "end_date", title: "Selesai" },
-    { key: "image", dataIndex: "image", title: "Gambar" },
+    {
+      key: "image",
+      dataIndex: "image",
+      title: "Gambar",
+      render(value, record, index) {
+        if (!record.image) return <div>-</div>;
+        return (
+          <Image
+            src={record.image}
+            alt="Failed load image"
+            width={100}
+            height={100}
+          />
+        );
+      },
+    },
 
     { key: "created_at", dataIndex: "created_at", title: "Created At" },
     { key: "updated_at", dataIndex: "updated_at", title: "UpdatedA At" },

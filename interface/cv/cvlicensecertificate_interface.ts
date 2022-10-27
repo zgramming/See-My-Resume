@@ -6,7 +6,7 @@ export interface CVLicenseCertificateInterface {
   name: string;
   publisher: string;
   start_date: Date;
-  end_date: Date;
+  end_date?: Date;
   is_expired: boolean;
   url?: string;
   file?: string;
