@@ -81,7 +81,7 @@ const PreviewPage = () => {
             onChange={(e) => {}}
             items={[
               {
-                label: `Web Portofolio`,
+                label: `WEBSITE`,
                 key: "website",
                 children: <PreviewWebPortfolio />,
               },

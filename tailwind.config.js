@@ -19,6 +19,9 @@ module.exports = {
         warning: process.env["NEXT_PUBLIC_TAILWIND_WARNING_COLOR"],
         error: process.env["NEXT_PUBLIC_TAILWIND_ERROR_COLOR"],
       },
+      fontFamily: {
+        "nunito-sans": ["Nunito", "sans-serif"],
+      },
     },
   },
   plugins: [],
