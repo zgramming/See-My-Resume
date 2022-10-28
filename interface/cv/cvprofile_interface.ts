@@ -9,8 +9,14 @@ export interface CVProfileInterface {
   phone?: string;
   email?: string;
   web?: string;
+  twitter?: string;
+  facebook?: string;
+  linkedIn?: string;
+  instagram?: string;
   address?: string;
   image?: string;
+  banner_image?: string;
+  latest_resume?: string;
   created_at: Date;
   updated_at: Date;
   created_by?: any;

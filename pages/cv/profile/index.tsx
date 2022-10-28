@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Card,
   Form,
@@ -11,17 +10,20 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import axios from "axios";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
-import { SaveOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  FilePdfOutlined,
+  SaveOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 
 import useUserLogin from "../../../hooks/use_userlogin";
 import { CVProfileInterface } from "../../../interface/cv/cvprofile_interface";
 import { baseAPIURL } from "../../../utils/constant";
 import { regexPhone } from "../../../utils/regex";
-
-import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 
 const profileFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);
@@ -35,7 +37,6 @@ const profileFetcher = async (url: string) => {
 const ProfilePage = () => {
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
-  const [files, setFiles] = useState<RcFile[]>([]);
   const userLogin = useUserLogin();
 
   const {
@@ -55,6 +56,10 @@ const ProfilePage = () => {
       phone: dataProfile?.phone,
       email: dataProfile?.email,
       web: dataProfile?.web,
+      twitter: dataProfile?.twitter,
+      instagram: dataProfile?.instagram,
+      facebook: dataProfile?.facebook,
+      linkedIn: dataProfile?.linkedIn,
       address: dataProfile?.address,
     });
     return () => {};
@@ -65,14 +70,17 @@ const ProfilePage = () => {
       setIsLoading(true);
       const values = await form.validateFields();
       const url = baseAPIURL + `/cv/profile`;
-
       const formData = new FormData();
       for (const key in values) {
-        if (values[key]) formData.append(key, values[key]);
+        if (values[key]) formData.set(key, values[key]);
       }
 
-      formData.append("users_id", `${userLogin?.id}`);
-      formData.append("image", files[0]);
+      formData.set("users_id", `${userLogin?.id}`);
+      if (values.image) formData.set("image", values.image.file);
+      if (values.banner_image)
+        formData.set("banner_image", values.banner_image.file);
+      if (values.latest_resume)
+        formData.set("latest_resume", values.latest_resume.file);
       const response = await axios.post(url, formData);
       const { data, success, message } = response.data;
       notification.success({
@@ -112,20 +120,6 @@ const ProfilePage = () => {
     }
   };
 
-  const propsUploadImage: UploadProps = {
-    maxCount: 1,
-    accept: ".jpg, .png, .jpeg",
-    /// Set Default image
-    ...(dataProfile && {}),
-
-    async beforeUpload(file, FileList) {
-      setFiles(FileList);
-
-      // Prevent upload
-      return false;
-    },
-  };
-
   return (
     <Spin spinning={isValidating || isLoading}>
       <Card>
@@ -150,9 +144,6 @@ const ProfilePage = () => {
             layout="vertical"
             onFinish={onFinish}
           >
-            <div className="flex flex-row justify-center">
-              <Avatar src={dataProfile?.image} className="w-52 h-52" />
-            </div>
             <Form.Item label="Name" name="name" rules={[{ required: true }]}>
               <Input name="name" placeholder="Masukkan namamu" />
             </Form.Item>
@@ -194,14 +185,96 @@ const ProfilePage = () => {
             <Form.Item label="Web" name="web" rules={[{ type: "url" }]}>
               <Input name="web" placeholder="Masukkan Web Url" type="url" />
             </Form.Item>
+            <Form.Item label="Twitter" name="twitter" rules={[{ type: "url" }]}>
+              <Input placeholder="Masukkan link Twitter" />
+            </Form.Item>
+            <Form.Item
+              label="Facebook"
+              name="facebook"
+              rules={[{ type: "url" }]}
+            >
+              <Input placeholder="Masukkan Facebook" />
+            </Form.Item>
+            <Form.Item
+              label="Instagram"
+              name="instagram"
+              rules={[{ type: "url" }]}
+            >
+              <Input placeholder="Masukkan Instagram" />
+            </Form.Item>
+            <Form.Item
+              label="LinkedIn"
+              name="linkedIn"
+              rules={[{ type: "url" }]}
+            >
+              <Input placeholder="Masukkan LinkedIn" />
+            </Form.Item>
+
             <Form.Item label="Alamat" name="address">
               <TextArea rows={4} />
             </Form.Item>
-            <Form.Item label="Image" name="image">
-              <Upload {...propsUploadImage}>
-                <Button icon={<UploadOutlined />}>Upload Gambar</Button>
-              </Upload>
-            </Form.Item>
+            <div className="flex flex-col mb-5">
+              <Form.Item label="Image" name="image">
+                <Upload
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  accept=".jpg, .png, .jpeg"
+                >
+                  <Button icon={<UploadOutlined />}>Upload Gambar</Button>
+                </Upload>
+              </Form.Item>
+              {dataProfile?.image && (
+                <div className="relative">
+                  <Image
+                    src={dataProfile.image}
+                    alt="Image"
+                    width={150}
+                    height={150}
+                    className="rounded-full shadow"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col mb-5">
+              <Form.Item label="Banner Image" name="banner_image">
+                <Upload
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  accept=".jpg, .png, .jpeg"
+                >
+                  <Button icon={<UploadOutlined />}>Upload Banner</Button>
+                </Upload>
+              </Form.Item>
+              {dataProfile?.banner_image && (
+                <div className="relative">
+                  <Image
+                    src={dataProfile.banner_image}
+                    alt="Image"
+                    width={150}
+                    height={150}
+                    className="shadow"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-row items-center">
+              <Form.Item label="Latest Resume" name="latest_resume">
+                <Upload beforeUpload={() => false} maxCount={1} accept=".pdf">
+                  <Button icon={<UploadOutlined />}>Upload PDF</Button>
+                </Upload>
+              </Form.Item>
+              {dataProfile?.latest_resume && (
+                <Button
+                  type="link"
+                  size="large"
+                  icon={<FilePdfOutlined />}
+                  danger
+                  onClick={(e) => window.open(`${dataProfile.latest_resume}`)}
+                />
+              )}
+            </div>
           </Form>
         </div>
       </Card>
