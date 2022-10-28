@@ -1,16 +1,17 @@
-import { Button, Menu } from "antd";
+import { Button, Card, Menu } from "antd";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { destroyCookie } from "nookies";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { LogoutOutlined, PieChartOutlined } from "@ant-design/icons";
 
+import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
-import { AppAccessMenu, Users } from "../../interface/main_interface";
+import { AppAccessMenu } from "../../interface/main_interface";
 import { baseAPIURL, keyLocalStorageLogin } from "../../utils/constant";
-import { destroyCookie } from "nookies";
 
 const accessibleMenuFetcher = async (url: string, route?: any) => {
   const request = await axios.get(`${url}`, { params: { route } });
@@ -31,9 +32,8 @@ const currentPathHandler = (path: string): string => {
 
 const SiderMenu = (props: {}) => {
   const { pathname, push, replace, route } = useRouter();
-
+  const user = useUserLogin();
   const [currentPath, setCurrentPath] = useState(currentPathHandler(pathname));
-  const [user, setUser] = useState<Users | undefined>();
   const [items, setItems] = useState<ItemType[]>([]);
 
   const { data: dataAccessibleMenu, error: errorAccessibleMenu } = useSWR(
@@ -85,15 +85,8 @@ const SiderMenu = (props: {}) => {
     return () => {};
   }, [pathname]);
 
-  useEffect(() => {
-    if (typeof window !== undefined) {
-      setUser(JSON.parse(localStorage.getItem(keyLocalStorageLogin) ?? ""));
-    }
-    return () => {};
-  }, []);
-
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col ">
       <Menu
         theme="light"
         mode="inline"
@@ -109,6 +102,18 @@ const SiderMenu = (props: {}) => {
           push(path);
         }}
       />
+      <Card
+        style={{ margin: 0, padding: 0 }}
+        bodyStyle={{
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <div className="flex flex-col items-center justify-center p-2 font-bold">
+          <div className="">{user?.name}</div>
+          <div className="font-thin">{user?.email}</div>
+        </div>
+      </Card>
       <Button
         type="primary"
         htmlType="button"

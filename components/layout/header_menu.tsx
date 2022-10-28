@@ -1,15 +1,15 @@
 import { Menu, notification } from "antd";
 import { Header } from "antd/lib/layout/layout";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 import { PieChartOutlined } from "@ant-design/icons";
 
 import { getItem } from "../../interface/layout/menu_items_interface";
-import useSWR from "swr";
-import axios from "axios";
 import { AppAccessModul, Users } from "../../interface/main_interface";
-import { useEffect, useState } from "react";
-import { ItemType } from "antd/lib/menu/hooks/useItems";
-import { useRouter } from "next/router";
 import { keyLocalStorageLogin } from "../../utils/constant";
 
 const headerFetcher = async (url: string, params?: any) => {
@@ -36,11 +36,7 @@ const HeaderMenu = () => {
     currentPathHeaderHandler(pathname)
   );
 
-  const {
-    data: accessibleModul,
-    error,
-    mutate,
-  } = useSWR(
+  const { data: accessibleModul } = useSWR(
     [
       `${
         process.env.NEXT_PUBLIC_BASEAPIURL
@@ -76,7 +72,7 @@ const HeaderMenu = () => {
   }, []);
 
   return (
-    <Header className="bg-white">
+    <Header className="bg-white ">
       <Menu
         theme="light"
         mode="horizontal"
