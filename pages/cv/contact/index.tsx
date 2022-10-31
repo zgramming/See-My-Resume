@@ -1,12 +1,11 @@
 import { Card, Space, Spin, Table, TableColumnsType } from "antd";
 import Search from "antd/lib/input/Search";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import useUserLogin from "../../../hooks/use_userlogin";
 import { CVContactInterface } from "../../../interface/cv/cvcontact_interface";
 import { baseAPIURL } from "../../../utils/constant";
-
 interface DataSourceInterface {
   no: number;
   email: string;

@@ -404,7 +404,7 @@ const FormModal = (props: {
               maxCount={1}
               beforeUpload={async (file, listfile) => false}
             >
-              <Button icon={<UploadOutlined />}>Upload Gambar</Button>
+              <Button icon={<UploadOutlined />}>Upload File</Button>
             </Upload>
           </Form.Item>
         </Form>
