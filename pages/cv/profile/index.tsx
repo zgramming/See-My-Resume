@@ -62,6 +62,7 @@ const ProfilePage = () => {
       linkedIn: dataProfile?.linkedIn,
       github: dataProfile?.github,
       address: dataProfile?.address,
+      username: dataProfile?.user.username,
     });
     return () => {};
   }, [form, dataProfile]);
@@ -145,6 +146,17 @@ const ProfilePage = () => {
             layout="vertical"
             onFinish={onFinish}
           >
+            <Form.Item label="Username" name="username">
+              <Input name="username" disabled />
+            </Form.Item>
+            <Form.Item label="Email" name="email" rules={[{ type: "email" }]}>
+              <Input
+                name="email"
+                placeholder="Masukkan Email"
+                type="email"
+                disabled
+              />
+            </Form.Item>
             <Form.Item label="Name" name="name" rules={[{ required: true }]}>
               <Input name="name" placeholder="Masukkan namamu" />
             </Form.Item>
@@ -180,9 +192,7 @@ const ProfilePage = () => {
                 className="w-full"
               />
             </Form.Item>
-            <Form.Item label="Email" name="email" rules={[{ type: "email" }]}>
-              <Input name="email" placeholder="Masukkan Email" type="email" />
-            </Form.Item>
+
             <Form.Item label="Web" name="web" rules={[{ type: "url" }]}>
               <Input name="web" placeholder="Masukkan Web Url" type="url" />
             </Form.Item>
