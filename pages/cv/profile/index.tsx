@@ -60,6 +60,7 @@ const ProfilePage = () => {
       instagram: dataProfile?.instagram,
       facebook: dataProfile?.facebook,
       linkedIn: dataProfile?.linkedIn,
+      github: dataProfile?.github,
       address: dataProfile?.address,
     });
     return () => {};
@@ -208,6 +209,9 @@ const ProfilePage = () => {
               rules={[{ type: "url" }]}
             >
               <Input placeholder="Masukkan LinkedIn" />
+            </Form.Item>
+            <Form.Item label="Github" name="github" rules={[{ type: "url" }]}>
+              <Input placeholder="Masukkan Github" />
             </Form.Item>
 
             <Form.Item label="Alamat" name="address">

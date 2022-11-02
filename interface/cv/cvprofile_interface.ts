@@ -12,6 +12,7 @@ export interface CVProfileInterface {
   twitter?: string;
   facebook?: string;
   linkedIn?: string;
+  github?: string;
   instagram?: string;
   address?: string;
   image?: string;
