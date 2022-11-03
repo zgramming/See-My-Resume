@@ -21,16 +21,13 @@ import {
 } from "@ant-design/icons";
 
 import useUserLogin from "../../../hooks/use_userlogin";
-import { CVProfileInterface } from "../../../interface/cv/cvprofile_interface";
+import { Users } from "../../../interface/main_interface";
 import { baseAPIURL } from "../../../utils/constant";
 import { regexPhone } from "../../../utils/regex";
 
 const profileFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);
-  const {
-    data,
-    success,
-  }: { data: CVProfileInterface | undefined; success: boolean } = request.data;
+  const { data, success }: { data: Users; success: boolean } = request.data;
   return data;
 };
 
@@ -40,7 +37,7 @@ const ProfilePage = () => {
   const userLogin = useUserLogin();
 
   const {
-    data: dataProfile,
+    data: dataUsers,
     mutate: reloadProfile,
     isValidating,
   } = useSWR(
@@ -49,23 +46,24 @@ const ProfilePage = () => {
   );
 
   useEffect(() => {
+    const profile = dataUsers?.CVProfile;
     form.setFieldsValue({
-      name: dataProfile?.name,
-      motto: dataProfile?.motto,
-      description: dataProfile?.description,
-      phone: dataProfile?.phone,
-      email: dataProfile?.email,
-      web: dataProfile?.web,
-      twitter: dataProfile?.twitter,
-      instagram: dataProfile?.instagram,
-      facebook: dataProfile?.facebook,
-      linkedIn: dataProfile?.linkedIn,
-      github: dataProfile?.github,
-      address: dataProfile?.address,
-      username: dataProfile?.user.username,
+      username: dataUsers?.username,
+      email: dataUsers?.email,
+      name: dataUsers?.name,
+      motto: profile?.motto,
+      description: profile?.description,
+      phone: profile?.phone,
+      web: profile?.web,
+      twitter: profile?.twitter,
+      instagram: profile?.instagram,
+      facebook: profile?.facebook,
+      linkedIn: profile?.linkedIn,
+      github: profile?.github,
+      address: profile?.address,
     });
     return () => {};
-  }, [form, dataProfile]);
+  }, [form, dataUsers, userLogin]);
 
   const onFinish = async () => {
     try {
@@ -149,7 +147,7 @@ const ProfilePage = () => {
             <Form.Item label="Username" name="username">
               <Input name="username" disabled />
             </Form.Item>
-            <Form.Item label="Email" name="email" rules={[{ type: "email" }]}>
+            <Form.Item label="Email" name="email">
               <Input
                 name="email"
                 placeholder="Masukkan Email"
@@ -157,8 +155,8 @@ const ProfilePage = () => {
                 disabled
               />
             </Form.Item>
-            <Form.Item label="Name" name="name" rules={[{ required: true }]}>
-              <Input name="name" placeholder="Masukkan namamu" />
+            <Form.Item label="Name" name="name">
+              <Input name="name" placeholder="Masukkan namamu" disabled />
             </Form.Item>
             <Form.Item label="Motto" name="motto" rules={[{ required: true }]}>
               <TextArea rows={4} />
@@ -237,10 +235,10 @@ const ProfilePage = () => {
                   <Button icon={<UploadOutlined />}>Upload Gambar</Button>
                 </Upload>
               </Form.Item>
-              {dataProfile?.image && (
+              {dataUsers?.CVProfile?.image && (
                 <div className="relative">
                   <Image
-                    src={dataProfile.image}
+                    src={dataUsers.CVProfile.image}
                     alt="Image"
                     width={150}
                     height={150}
@@ -260,10 +258,10 @@ const ProfilePage = () => {
                   <Button icon={<UploadOutlined />}>Upload Banner</Button>
                 </Upload>
               </Form.Item>
-              {dataProfile?.banner_image && (
+              {dataUsers?.CVProfile?.banner_image && (
                 <div className="relative">
                   <Image
-                    src={dataProfile.banner_image}
+                    src={dataUsers.CVProfile.banner_image}
                     alt="Image"
                     width={150}
                     height={150}
@@ -279,13 +277,15 @@ const ProfilePage = () => {
                   <Button icon={<UploadOutlined />}>Upload PDF</Button>
                 </Upload>
               </Form.Item>
-              {dataProfile?.latest_resume && (
+              {dataUsers?.CVProfile?.latest_resume && (
                 <Button
                   type="link"
                   size="large"
                   icon={<FilePdfOutlined />}
                   danger
-                  onClick={(e) => window.open(`${dataProfile.latest_resume}`)}
+                  onClick={(e) =>
+                    window.open(`${dataUsers.CVProfile?.latest_resume}`)
+                  }
                 />
               )}
             </div>

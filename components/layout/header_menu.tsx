@@ -8,9 +8,9 @@ import useSWR from "swr";
 
 import { PieChartOutlined } from "@ant-design/icons";
 
+import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
-import { AppAccessModul, Users } from "../../interface/main_interface";
-import { keyLocalStorageLogin } from "../../utils/constant";
+import { AppAccessModul } from "../../interface/main_interface";
 
 const headerFetcher = async (url: string, params?: any) => {
   const request = await axios.get(`${url}`);
@@ -20,17 +20,18 @@ const headerFetcher = async (url: string, params?: any) => {
   return data;
 };
 
+const currentPathHeaderHandler = (path: string): string => {
+  const [first, second, third] = path
+    .split("/")
+    .filter((route) => route.length !== 0);
+
+  return `/${first}`;
+};
+
 const HeaderMenu = () => {
+  const user = useUserLogin();
   const { push, pathname } = useRouter();
-  const currentPathHeaderHandler = (path: string): string => {
-    const [first, second, third] = path
-      .split("/")
-      .filter((route) => route.length !== 0);
 
-    return `/${first}`;
-  };
-
-  const [user, setUser] = useState<Users | undefined>();
   const [items, setItems] = useState<ItemType[]>([]);
   const [currentPath, setCurrentPath] = useState(
     currentPathHeaderHandler(pathname)
@@ -64,12 +65,6 @@ const HeaderMenu = () => {
     setCurrentPath(path);
     return () => {};
   }, [pathname]);
-
-  useEffect(() => {
-    if (typeof window !== undefined)
-      setUser(JSON.parse(localStorage.getItem(keyLocalStorageLogin) ?? ""));
-    return () => {};
-  }, []);
 
   return (
     <Header className="bg-white ">

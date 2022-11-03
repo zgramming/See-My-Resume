@@ -1,3 +1,5 @@
+import { CVProfileInterface } from "./cv/cvprofile_interface";
+
 export interface AppGroupUser {
   id: number;
   code: string;
@@ -179,4 +181,5 @@ export interface Users {
   updated_by?: number;
 
   app_group_user?: AppGroupUser;
+  CVProfile?: CVProfileInterface;
 }
