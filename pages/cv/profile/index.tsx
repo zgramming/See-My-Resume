@@ -238,6 +238,9 @@ const ProfilePage = () => {
               {dataUsers?.CVProfile?.image && (
                 <div className="relative">
                   <Image
+                    key={new Date(
+                      dataUsers.CVProfile.updated_at
+                    ).toDateString()}
                     src={dataUsers.CVProfile.image}
                     alt="Image"
                     width={150}
@@ -261,6 +264,9 @@ const ProfilePage = () => {
               {dataUsers?.CVProfile?.banner_image && (
                 <div className="relative">
                   <Image
+                    key={new Date(
+                      dataUsers.CVProfile.updated_at
+                    ).toDateString()}
                     src={dataUsers.CVProfile.banner_image}
                     alt="Image"
                     width={150}

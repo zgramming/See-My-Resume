@@ -122,6 +122,7 @@ const ExperiencePage = () => {
         if (!record.image_company) return <div>-</div>;
         return (
           <Image
+            key={record.updated_at}
             src={record.image_company}
             alt="Failed load image"
             width={100}
@@ -263,7 +264,7 @@ const FormModal = (props: {
         if (values[key]) formData.append(key, values[key]);
       }
 
-      if (props.row) formData.append("id", props.row.id);
+      if (props.row) formData.set("id", props.row.id);
       formData.append("users_id", `${userLogin?.id}`);
       formData.append("is_graduated", formState.is_graduated ? "1" : "0");
       formData.append("tags", JSON.stringify(formState.tags ?? []));
