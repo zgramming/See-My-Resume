@@ -1,4 +1,9 @@
+import { CVEducationInterface } from "./cv/cveducation_interface";
+import { CVExperienceInterface } from "./cv/cvexperience_interface";
+import { CVLicenseCertificateInterface } from "./cv/cvlicensecertificate_interface";
+import { CVPortfolioInterface } from "./cv/cvportfolio_interface";
 import { CVProfileInterface } from "./cv/cvprofile_interface";
+import { CVSkillInterface } from "./cv/cvskill_interface";
 
 export interface AppGroupUser {
   id: number;
@@ -181,5 +186,10 @@ export interface Users {
   updated_by?: number;
 
   app_group_user?: AppGroupUser;
-  CVProfile?: CVProfileInterface;
+  CVSkill: CVSkillInterface[];
+  CVProfile: CVProfileInterface;
+  CVPortfolio: CVPortfolioInterface[];
+  CVLicenseCertificate: CVLicenseCertificateInterface[];
+  CVExperience: CVExperienceInterface[];
+  CVEducation: CVEducationInterface[];
 }

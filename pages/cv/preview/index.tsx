@@ -1,6 +1,6 @@
 import { Button, Card, Select, Space, Spin, Tabs } from "antd";
 import axios from "axios";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import useSWR from "swr";
 
 import {
@@ -15,10 +15,9 @@ import useUserLogin from "../../../hooks/use_userlogin";
 import { CVEducationInterface } from "../../../interface/cv/cveducation_interface";
 import { CVExperienceInterface } from "../../../interface/cv/cvexperience_interface";
 import { CVLicenseCertificateInterface } from "../../../interface/cv/cvlicensecertificate_interface";
-import { CVPreviewPDF } from "../../../interface/cv/cvpreview_pdf_interface";
 import { CVProfileInterface } from "../../../interface/cv/cvprofile_interface";
 import { CVSkillInterface } from "../../../interface/cv/cvskill_interface";
-import { MasterData } from "../../../interface/main_interface";
+import { MasterData, Users } from "../../../interface/main_interface";
 import { baseAPIURL } from "../../../utils/constant";
 
 const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
@@ -32,38 +31,7 @@ const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
 
 const previewPDFFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);
-  const {
-    data,
-    success,
-  }: { data: CVPreviewPDF | undefined; success: boolean } = request.data;
-  return data;
-};
-
-const experienceFetcher = async (url: string) => {
-  const request = await axios.get(`${url}`);
-  const {
-    data,
-    success,
-  }: { data: CVExperienceInterface[] | undefined; success: boolean } =
-    request.data;
-  return data;
-};
-
-const profileFetcher = async (url: string) => {
-  const request = await axios.get(`${url}`);
-  const {
-    data,
-    success,
-  }: { data: CVProfileInterface | undefined; success: boolean } = request.data;
-  return data;
-};
-
-const educationFetcher = async (url: string) => {
-  const request = await axios.get(`${url}`);
-  const {
-    data,
-    success,
-  }: { data: CVEducationInterface[] | undefined; success: boolean } =
+  const { data, success }: { data: Users | undefined; success: boolean } =
     request.data;
   return data;
 };
@@ -213,26 +181,24 @@ const PreviewPDF = () => {
       </div>
       <div className="w-[50rem] flex flex-col justify-center rounded mx-auto p-5 bg-slate-200">
         {/* Header */}
-        <CVProfile profile={dataPreview?.profile} />
+        <CVProfile
+          profile={dataPreview?.CVProfile}
+          email={dataPreview?.email}
+          name={dataPreview?.name}
+        />
         {/* Body -> Experience */}
         <div className="flex flex-col space-y-5 my-5">
-          <CVExperience experience={dataPreview?.experience} />
-          <CVEducation education={dataPreview?.education} />
-          <CVLicenseAndCertificate value={dataPreview?.licenseAndCertificate} />
-          <CVSkill
-            masterLevel={dataPreview?.master_level}
-            skill={dataPreview?.skill}
-          />
+          <CVExperience experience={dataPreview?.CVExperience} />
+          <CVEducation education={dataPreview?.CVEducation} />
+          <CVLicenseAndCertificate value={dataPreview?.CVLicenseCertificate} />
+          <CVSkill skill={dataPreview?.CVSkill} />
         </div>
       </div>
     </div>
   );
 };
 
-const CVSkill = (props: {
-  skill?: CVSkillInterface[];
-  masterLevel?: MasterData[];
-}) => {
+const CVSkill = (props: { skill?: CVSkillInterface[] }) => {
   return (
     <div className="flex flex-col">
       <div className="text-lg font-semibold border-solid border-0 border-b-4 border-primary mb-5">
@@ -246,18 +212,6 @@ const CVSkill = (props: {
             style={{
               backgroundColor: `${val.level.parameter1_value}`,
             }}
-          >
-            {val.name}
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-wrap items-center ">
-        <span>Legend :</span>
-        {props.masterLevel?.map((val) => (
-          <div
-            key={val.id}
-            className="text-white text-[8pt] rounded p-1 m-1"
-            style={{ backgroundColor: `${val.parameter1_value}` }}
           >
             {val.name}
           </div>
@@ -339,11 +293,15 @@ const CVEducation = (props: { education?: CVEducationInterface[] }) => {
   );
 };
 
-const CVProfile = (props: { profile?: CVProfileInterface }) => {
+const CVProfile = (props: {
+  name?: string;
+  email?: string;
+  profile?: CVProfileInterface;
+}) => {
   return (
     <div className="flex flex-row justify-between items-center">
       <div className="flex flex-col space-y-2 pr-10">
-        <div className="font-bold text-2xl">{props.profile?.name}</div>
+        <div className="font-bold text-2xl">{props.name}</div>
         <div className="font-semibold text-lg">{props.profile?.motto}</div>
         <div className="font-thin text-xs text-gray-500 text-justify">
           {props.profile?.description}
@@ -353,9 +311,7 @@ const CVProfile = (props: { profile?: CVProfileInterface }) => {
         {props.profile?.phone && (
           <InfoCV icon={<PhoneFilled />} title={props.profile.phone} />
         )}
-        {props.profile?.email && (
-          <InfoCV icon={<MailFilled />} title={props.profile.email} />
-        )}
+        {props.email && <InfoCV icon={<MailFilled />} title={props.email} />}
         {props.profile?.web && (
           <InfoCV icon={<GlobalOutlined />} title={props.profile.web} />
         )}
