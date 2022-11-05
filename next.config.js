@@ -3,7 +3,16 @@ const nextConfig = {
   // reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["localhost", "api.seemycv"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "http",
+        hostname: "api.seemycv.my.id",
+      },
+    ],
   },
 };
 
