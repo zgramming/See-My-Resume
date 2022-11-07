@@ -38,3 +38,9 @@ jobs:
             source ~/.nvm/nvm.sh
             npm --help
             npm i
+            echo "Re-build application"
+            npm run build
+            echo "Run Application"
+            npm run start
+            echo "Restart Application, admin is name pm2 instance application"
+            pm2 restart admin
