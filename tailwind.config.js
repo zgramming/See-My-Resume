@@ -11,6 +11,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      width: {
+        "paper-A4": "210mm",
+      },
+      height: {
+        "paper-A4": "297mm",
+      },
       colors: {
         primary: process.env["NEXT_PUBLIC_TAILWIND_PRIMARY_COLOR"],
         accent: process.env["NEXT_PUBLIC_TAILWIND_ACCENT_COLOR"],

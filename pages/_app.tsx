@@ -17,9 +17,6 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
   pageProps,
 }: AppLayoutProps) => {
   const router = useRouter();
-  const getLayout =
-    Component.getLayout ||
-    ((page: ReactNode) => <AdminLayout>{page}</AdminLayout>);
 
   /// Only get 3 first value from array
   const arrPathname = convertRoutePathToArray(router.asPath)
@@ -35,6 +32,10 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
       warningColor: process.env["NEXT_PUBLIC_TAILWIND_WARNING_COLOR"],
     },
   });
+
+  const getLayout =
+    Component.getLayout ??
+    ((page: ReactNode) => <AdminLayout>{page}</AdminLayout>);
 
   return getLayout(
     <>

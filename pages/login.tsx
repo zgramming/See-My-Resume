@@ -1,8 +1,9 @@
 import { Button, Form, Input, notification, Spin } from "antd";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { setCookie, destroyCookie } from "nookies";
-import { useEffect, useState } from "react";
+import { setCookie } from "nookies";
+import { useState } from "react";
+
 import { baseAPIURL, keyLocalStorageLogin } from "../utils/constant";
 
 const LoginPage = () => {
@@ -76,11 +77,14 @@ const LoginPage = () => {
               >
                 <Input.Password name="password" placeholder="Input password" />
               </Form.Item>
-              <div className="flex flex-col text-center py-5 space-y-5 ">
-                <Button type="primary" size="large" htmlType="submit">
+              <Form.Item
+                name="btn_submit"
+                className="flex flex-col text-center py-5 space-y-5"
+              >
+                <Button type="primary" size="large" htmlType="submit" className="w-full">
                   Login
                 </Button>
-              </div>
+              </Form.Item>
             </Form>
           </div>
           <div className="hidden lg:flex flex-col justify-center items-center rounded-tr-lg rounded-br-lg bg-primary lg:basis-1/2">
