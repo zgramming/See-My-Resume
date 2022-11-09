@@ -4,14 +4,10 @@ import useSWR from "swr";
 
 import { SaveOutlined } from "@ant-design/icons";
 
+import DefaultTemplatePDF from "../../../components/template_pdf/default/default_template_pdf";
 import useUserLogin from "../../../hooks/use_userlogin";
 import { MasterData, Users } from "../../../interface/main_interface";
 import { baseAPIURL } from "../../../utils/constant";
-import { CVProfile } from "../../../components/cv/preview/preview_cv_profile";
-import { CVSkill } from "../../../components/cv/preview/preview_cv_skill";
-import { CVLicenseAndCertificate } from "../../../components/cv/preview/preview_cv_license_certificate";
-import { CVEducation } from "../../../components/cv/preview/preview_cv_education";
-import { CVExperience } from "../../../components/cv/preview/preview_cv_experience";
 
 const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
   const request = await axios.get(`${url}?master_category_code=${code}`);
@@ -173,25 +169,7 @@ const PreviewPDF = () => {
           </Button>
         </Space>
       </div>
-      <div className="flex flex-col items-center">
-        <div className="w-full min-h-[297mm] flex flex-col bg-blue-100 rounded p-5 lg:w-paper-A4">
-          {/* Header */}
-          <CVProfile
-            profile={dataPreview?.CVProfile}
-            email={dataPreview?.email}
-            name={dataPreview?.name}
-          />
-          {/* Body -> Experience */}
-          <div className="flex flex-col space-y-5 my-5">
-            <CVExperience experience={dataPreview?.CVExperience} />
-            <CVEducation education={dataPreview?.CVEducation} />
-            <CVLicenseAndCertificate
-              value={dataPreview?.CVLicenseCertificate}
-            />
-            <CVSkill skill={dataPreview?.CVSkill} />
-          </div>
-        </div>
-      </div>
+      <DefaultTemplatePDF user={dataPreview} />
     </div>
   );
 };
