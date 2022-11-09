@@ -44,6 +44,97 @@ const currentPathHandler = (path: string): string => {
   return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
 };
 
+const ProfileLogin = (props: { user?: Users }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({
+      name: props.user?.name,
+    });
+    return () => {};
+  }, [form, props.user]);
+
+  const onFinish = async (val: any) => {
+    try {
+      const { name } = await form.validateFields();
+      const { data, status } = await axios.put(
+        `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/user/update_name/${props.user?.id}`,
+        { name }
+      );
+      const {
+        data: dataResponse,
+        message,
+        success,
+      }: { data: Users; message: string; success: true } = data;
+      setCookie(null, keyLocalStorageLogin, JSON.stringify(dataResponse));
+      notification.success({
+        message: "Success Update",
+        description: message,
+      });
+
+      setIsModalOpen(false);
+    } catch (error: any) {
+      HandleErrorForm(error);
+    }
+  };
+  return (
+    <>
+      <Card
+        style={{ margin: 0, padding: 0 }}
+        bodyStyle={{
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <div className="flex flex-col items-center justify-center p-2 font-bold">
+          <div className="">{props.user?.name}</div>
+          <div className="font-thin">{props.user?.email}</div>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={(e) => setIsModalOpen(true)}
+          />
+        </div>
+      </Card>
+      {isModalOpen && (
+        <Modal
+          title="Update User"
+          open={isModalOpen}
+          maskClosable={false}
+          keyboard={false}
+          closable={false}
+          onCancel={(e) => setIsModalOpen(false)}
+          footer={
+            <Spin spinning={false}>
+              <Button onClick={(e) => setIsModalOpen(false)}>Batal</Button>
+              <Button
+                htmlType="submit"
+                form="form_update_name"
+                className="bg-success text-white"
+              >
+                Simpan
+              </Button>
+            </Spin>
+          }
+        >
+          <Form
+            form={form}
+            name="form_update_name"
+            id="form_update_name"
+            layout="vertical"
+            onFinish={onFinish}
+          >
+            <Form.Item label="Name" name="name" rules={[{ required: false }]}>
+              <Input type="text" placeholder="Name" />
+            </Form.Item>
+          </Form>
+        </Modal>
+      )}
+    </>
+  );
+};
+
 const SiderMenu = (props: {}) => {
   const user = useUserLogin();
   const { pathname, push, replace, route } = useRouter();
@@ -133,97 +224,6 @@ const SiderMenu = (props: {}) => {
         Logout
       </Button>
     </div>
-  );
-};
-
-const ProfileLogin = (props: { user?: Users }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [form] = Form.useForm();
-
-  useEffect(() => {
-    form.setFieldsValue({
-      name: props.user?.name,
-    });
-    return () => {};
-  }, [form, props.user]);
-
-  const onFinish = async (val: any) => {
-    try {
-      const { name } = await form.validateFields();
-      const { data, status } = await axios.put(
-        `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/user/update_name/${props.user?.id}`,
-        { name }
-      );
-      const {
-        data: dataResponse,
-        message,
-        success,
-      }: { data: Users; message: string; success: true } = data;
-      setCookie(null, keyLocalStorageLogin, JSON.stringify(dataResponse));
-      notification.success({
-        message: "Success Update",
-        description: message,
-      });
-
-      setIsModalOpen(false);
-    } catch (error: any) {
-      HandleErrorForm(error);
-    }
-  };
-  return (
-    <>
-      <Card
-        style={{ margin: 0, padding: 0 }}
-        bodyStyle={{
-          margin: 0,
-          padding: 0,
-        }}
-      >
-        <div className="flex flex-col items-center justify-center p-2 font-bold">
-          <div className="">{props.user?.name}</div>
-          <div className="font-thin">{props.user?.email}</div>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={(e) => setIsModalOpen(true)}
-          />
-        </div>
-      </Card>
-      {isModalOpen && (
-        <Modal
-          title="Update User"
-          open={isModalOpen}
-          maskClosable={false}
-          keyboard={false}
-          closable={false}
-          onCancel={(e) => setIsModalOpen(false)}
-          footer={
-            <Spin spinning={false}>
-              <Button onClick={(e) => setIsModalOpen(false)}>Batal</Button>
-              <Button
-                htmlType="submit"
-                form="form_update_name"
-                className="bg-success text-white"
-              >
-                Simpan
-              </Button>
-            </Spin>
-          }
-        >
-          <Form
-            form={form}
-            name="form_update_name"
-            id="form_update_name"
-            layout="vertical"
-            onFinish={onFinish}
-          >
-            <Form.Item label="Name" name="name" rules={[{ required: false }]}>
-              <Input type="text" placeholder="Name" />
-            </Form.Item>
-          </Form>
-        </Modal>
-      )}
-    </>
   );
 };
 

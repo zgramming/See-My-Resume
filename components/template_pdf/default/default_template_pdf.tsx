@@ -14,6 +14,68 @@ import { CVProfileInterface } from "../../../interface/cv/cvprofile_interface";
 import { CVSkillInterface } from "../../../interface/cv/cvskill_interface";
 import { Users } from "../../../interface/main_interface";
 
+const CVSkill = (props: { skill?: CVSkillInterface[] }) => {
+  return (
+    <div className="flex flex-col">
+      <div className="text-lg font-semibold border-solid border-0 border-b-4 border-primary mb-5">
+        SKILLS
+      </div>
+      <div className="flex flex-wrap mb-5">
+        {props.skill?.map((val) => (
+          <div
+            key={val.id}
+            className="rounded text-white text-sm font-medium  p-1 m-1"
+            style={{
+              backgroundColor: `${val.level.parameter1_value}`,
+            }}
+          >
+            {val.name}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CVLicenseAndCertificate = (props: {
+  value?: CVLicenseCertificateInterface[];
+}) => {
+  return (
+    <div className="flex flex-col">
+      <div className="text-lg font-semibold border-solid border-0 border-b-4 border-primary mb-5">
+        LICENSE & CERTIFICATE
+      </div>
+      {props.value?.map((val, index) => {
+        const startDate = new Date(val.start_date);
+        const endDate = val.end_date && new Date(val.end_date);
+        const readableStartDate = startDate.toLocaleString("default", {
+          month: "long",
+          year: "numeric",
+        });
+        const readableEndDate = endDate
+          ? "Expire at " +
+            endDate.toLocaleString("default", {
+              month: "long",
+              year: "numeric",
+            })
+          : "No Expire";
+        return (
+          <div className="flex items-start space-x-2" key={val.id}>
+            <div className="text-base">{index + 1}.</div>
+            <div className="flex flex-col space-y-1">
+              <div className="text-base font-bold">{val.name}</div>
+              <div className="text-sm font-semibold">{val.publisher}</div>
+              <div className="text-sm font-thin">
+                Publish at {readableStartDate} {readableEndDate}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const CVEducation = (props: { education?: CVEducationInterface[] }) => {
   return (
     <div className="flex flex-col ">
@@ -100,45 +162,6 @@ const CVExperience = (props: { experience?: CVExperienceInterface[] }) => {
   );
 };
 
-const CVLicenseAndCertificate = (props: {
-  value?: CVLicenseCertificateInterface[];
-}) => {
-  return (
-    <div className="flex flex-col">
-      <div className="text-lg font-semibold border-solid border-0 border-b-4 border-primary mb-5">
-        LICENSE & CERTIFICATE
-      </div>
-      {props.value?.map((val, index) => {
-        const startDate = new Date(val.start_date);
-        const endDate = val.end_date && new Date(val.end_date);
-        const readableStartDate = startDate.toLocaleString("default", {
-          month: "long",
-          year: "numeric",
-        });
-        const readableEndDate = endDate
-          ? "Expire at " +
-            endDate.toLocaleString("default", {
-              month: "long",
-              year: "numeric",
-            })
-          : "No Expire";
-        return (
-          <div className="flex items-start space-x-2" key={val.id}>
-            <div className="text-base">{index + 1}.</div>
-            <div className="flex flex-col space-y-1">
-              <div className="text-base font-bold">{val.name}</div>
-              <div className="text-sm font-semibold">{val.publisher}</div>
-              <div className="text-sm font-thin">
-                Publish at {readableStartDate} {readableEndDate}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
 const CVProfile = (props: {
   name?: string;
   email?: string;
@@ -146,7 +169,7 @@ const CVProfile = (props: {
 }) => {
   const InfoCV = (props: { icon: ReactNode; title: string }) => {
     return (
-      <div className="flex flex-row items-center space-x-2 ">
+      <div className="flex flex-row items-center space-x-2 pb-2">
         {props.icon && props.icon}
         <div className="text-xs">{props.title}</div>
       </div>
@@ -159,7 +182,7 @@ const CVProfile = (props: {
       <div className="font-thin text-xs text-gray-500 text-justify">
         {props.profile?.description}
       </div>
-      <div className="flex flex-row space-x-3 py-2">
+      <div className="flex flex-row flex-wrap space-x-3 pb-2">
         {props.profile?.phone && (
           <InfoCV icon={<PhoneFilled />} title={props.profile.phone} />
         )}
@@ -175,33 +198,20 @@ const CVProfile = (props: {
   );
 };
 
-const CVSkill = (props: { skill?: CVSkillInterface[] }) => {
-  return (
-    <div className="flex flex-col">
-      <div className="text-lg font-semibold border-solid border-0 border-b-4 border-primary mb-5">
-        SKILLS
-      </div>
-      <div className="flex flex-wrap mb-5">
-        {props.skill?.map((val) => (
-          <div
-            key={val.id}
-            className="rounded text-white text-sm font-medium  p-1 m-1"
-            style={{
-              backgroundColor: `${val.level.parameter1_value}`,
-            }}
-          >
-            {val.name}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const DefaultTemplatePDF = ({ user }: { user?: Users }) => {
+const DefaultTemplatePDF = ({
+  user,
+  isUseShadow = false,
+}: {
+  user?: Users;
+  isUseShadow?: boolean;
+}) => {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-full min-h-[297mm] flex flex-col bg-blue-100 rounded p-5 lg:w-paper-A4">
+      <div
+        className={`w-full min-h-[297mm] flex flex-col ${
+          isUseShadow && "shadow border-solid border-[1px] border-gray-200"
+        } rounded p-5 lg:w-paper-A4`}
+      >
         {/* Header */}
         <CVProfile
           profile={user?.CVProfile}

@@ -1,5 +1,7 @@
-import { Button, Card, Select, Space, Spin, Tabs } from "antd";
+import { Button, Card, notification, Select, Space, Spin, Tabs } from "antd";
 import axios from "axios";
+import { saveAs } from "file-saver";
+import { useState } from "react";
 import useSWR from "swr";
 
 import { SaveOutlined } from "@ant-design/icons";
@@ -23,36 +25,6 @@ const previewPDFFetcher = async (url: string) => {
   const { data, success }: { data: Users | undefined; success: boolean } =
     request.data;
   return data;
-};
-
-const PreviewPage = () => {
-  return (
-    <Spin spinning={false}>
-      <Card>
-        <div className="flex flex-col">
-          <div className="flex justify-between items-center mb-5">
-            <h1 className="font-medium text-base mr-5 md:text-xl">Preview</h1>
-          </div>
-          <Tabs
-            defaultActiveKey="1"
-            onChange={(e) => {}}
-            items={[
-              {
-                label: `WEBSITE`,
-                key: "website",
-                children: <PreviewWebPortfolio />,
-              },
-              {
-                label: `PDF CV`,
-                key: "pdf",
-                children: <PreviewPDF />,
-              },
-            ]}
-          />
-        </div>
-      </Card>
-    </Spin>
-  );
 };
 
 const PreviewWebPortfolio = () => {
@@ -121,6 +93,7 @@ const PreviewWebPortfolio = () => {
 
 const PreviewPDF = () => {
   const userLogin = useUserLogin();
+  const [isLoadingGeneratePDF, setIsLoadingGeneratePDF] = useState(false);
 
   const { data: dataPreview, mutate: reloadPreview } = useSWR(
     [`${baseAPIURL}/cv/preview/pdf/${userLogin?.id}`],
@@ -133,44 +106,97 @@ const PreviewPDF = () => {
       codeTemplateWebsiteFetcher
     );
 
-  return (
-    <div className="flex flex-col">
-      <div className="flex flex-row justify-between items-center my-5">
-        <div className="flex flex-wrap items-center space-x-2 ">
-          <div className="flex items-center space-x-3">
-            <div>Pilih Template</div>
-            <Select
-              className="w-auto md:min-w-[10rem]"
-              defaultValue={{
-                value: "",
-                label: "Pilih",
-              }}
-              onChange={(value: any) => {}}
-            >
-              <Select.Option value={""}>Pilih</Select.Option>
-              {dataCodeTemplate?.map((val, index) => {
-                return (
-                  <Select.Option key={val.id} value={val.id}>
-                    {val.name}
-                  </Select.Option>
-                );
-              }) ?? []}
-            </Select>
-          </div>
-        </div>
+  const generatePDF = async () => {
+    try {
+      setIsLoadingGeneratePDF(true);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASEAPIURL}/cv/preview/generate_pdf/${userLogin?.id}`
+      );
+      const { data: responseData, status } = response;
+      const { url_download, filename } = responseData.data;
+      saveAs(url_download, filename);
+      notification.success({
+        message: "Success",
+        description: "success generate file pdf",
+      });
+    } catch (error: any) {
+      console.log({ error });
+      alert("error generate pdf");
+    } finally {
+      setIsLoadingGeneratePDF(false);
+    }
+  };
 
-        <Space>
-          <Button
-            icon={<SaveOutlined />}
-            className="bg-success text-white"
-            onClick={() => {}}
-          >
-            Simpan
-          </Button>
-        </Space>
+  return (
+    <Spin spinning={isLoadingGeneratePDF}>
+      <div className="flex flex-col">
+        <div className="flex flex-row justify-between items-center my-5">
+          <div className="flex flex-wrap items-center space-x-2 ">
+            <div className="flex items-center space-x-3">
+              <div>Pilih Template</div>
+              <Select
+                className="w-auto md:min-w-[10rem]"
+                defaultValue={{
+                  value: "",
+                  label: "Pilih",
+                }}
+                onChange={(value: any) => {}}
+              >
+                <Select.Option value={""}>Pilih</Select.Option>
+                {dataCodeTemplate?.map((val, index) => {
+                  return (
+                    <Select.Option key={val.id} value={val.id}>
+                      {val.name}
+                    </Select.Option>
+                  );
+                }) ?? []}
+              </Select>
+            </div>
+          </div>
+
+          <Space>
+            <Button
+              icon={<SaveOutlined />}
+              className="bg-success text-white"
+              onClick={generatePDF}
+            >
+              Generate Template
+            </Button>
+          </Space>
+        </div>
+        <DefaultTemplatePDF user={dataPreview} isUseShadow />
       </div>
-      <DefaultTemplatePDF user={dataPreview} />
-    </div>
+    </Spin>
+  );
+};
+
+const PreviewPage = () => {
+  return (
+    <Spin spinning={false}>
+      <Card>
+        <div className="flex flex-col">
+          <div className="flex justify-between items-center mb-5">
+            <h1 className="font-medium text-base mr-5 md:text-xl">Preview</h1>
+          </div>
+          <Tabs
+            defaultActiveKey="1"
+            onChange={(e) => {}}
+            items={[
+              {
+                label: `WEBSITE`,
+                key: "website",
+                children: <PreviewWebPortfolio />,
+              },
+              {
+                label: `PDF CV`,
+                key: "pdf",
+                children: <PreviewPDF />,
+              },
+            ]}
+          />
+        </div>
+      </Card>
+    </Spin>
   );
 };
 
