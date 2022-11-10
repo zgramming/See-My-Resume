@@ -1,15 +1,15 @@
-import { Button, Card, notification, Select, Space, Spin, Tabs } from "antd";
-import axios from "axios";
-import { saveAs } from "file-saver";
-import { useState } from "react";
-import useSWR from "swr";
+import { Button, Card, notification, Select, Space, Spin, Tabs } from 'antd';
+import axios from 'axios';
+import { saveAs } from 'file-saver';
+import { useState } from 'react';
+import useSWR from 'swr';
 
-import { SaveOutlined } from "@ant-design/icons";
+import { SaveOutlined } from '@ant-design/icons';
 
-import DefaultTemplatePDF from "../../../components/template_pdf/default/default_template_pdf";
-import useUserLogin from "../../../hooks/use_userlogin";
-import { MasterData, Users } from "../../../interface/main_interface";
-import { baseAPIURL } from "../../../utils/constant";
+import DefaultTemplatePDF from '../../../components/template_pdf/default/default_template_pdf';
+import useUserLogin from '../../../hooks/use_userlogin';
+import { MasterData, Users } from '../../../interface/main_interface';
+import { baseAPIURL } from '../../../utils/constant';
 
 const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
   const request = await axios.get(`${url}?master_category_code=${code}`);
@@ -27,12 +27,14 @@ const previewPDFFetcher = async (url: string) => {
   return data;
 };
 
-const PreviewWebPortfolio = () => {
+const PreviewWebsite = () => {
   const { data: dataCodeTemplate, isValidating: isLoadingCodeTemplate } =
     useSWR(
       [`${baseAPIURL}/setting/master_data`, "KODE_TEMPLATE_WEB"],
       codeTemplateWebsiteFetcher
     );
+
+  const user = useUserLogin();
 
   return (
     <div className="flex flex-col space-y-10">
@@ -61,13 +63,13 @@ const PreviewWebPortfolio = () => {
         </div>
 
         <Space>
-          <Button
+          {/* <Button
             icon={<SaveOutlined />}
             className="bg-success text-white"
             onClick={() => {}}
           >
             Simpan
-          </Button>
+          </Button> */}
         </Space>
       </div>
 
@@ -81,11 +83,11 @@ const PreviewWebPortfolio = () => {
           margin: 0,
         }}
       >
-        <div className="h-[50rem] flex flex-col bg-slate-200 overflow-y-auto">
-          {Array.from<number>({ length: 100 }).map((val) => (
-            <h1 key={val}>Aku ganteng sekali</h1>
-          ))}
-        </div>
+        <iframe
+          name="Template Website"
+          src={`https://seemycv.my.id/${user?.username}`}
+          className="w-full h-[50rem] border-none shadow-xl"
+        ></iframe>
       </Card>
     </div>
   );
@@ -185,7 +187,7 @@ const PreviewPage = () => {
               {
                 label: `WEBSITE`,
                 key: "website",
-                children: <PreviewWebPortfolio />,
+                children: <PreviewWebsite />,
               },
               {
                 label: `PDF CV`,
