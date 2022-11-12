@@ -1,15 +1,15 @@
-import { Button, Card, notification, Select, Space, Spin, Tabs } from 'antd';
-import axios from 'axios';
-import { saveAs } from 'file-saver';
-import { useState } from 'react';
-import useSWR from 'swr';
+import { Button, Card, notification, Select, Space, Spin, Tabs } from "antd";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import { useState } from "react";
+import useSWR from "swr";
 
-import { SaveOutlined } from '@ant-design/icons';
+import { SaveOutlined } from "@ant-design/icons";
 
-import DefaultTemplatePDF from '../../../components/template_pdf/default/default_template_pdf';
-import useUserLogin from '../../../hooks/use_userlogin';
-import { MasterData, Users } from '../../../interface/main_interface';
-import { baseAPIURL } from '../../../utils/constant';
+import DefaultTemplatePDF from "../../../components/template_pdf/default/default_template_pdf";
+import useUserLogin from "../../../hooks/use_userlogin";
+import { MasterData, Users } from "../../../interface/main_interface";
+import { baseAPIURL } from "../../../utils/constant";
 
 const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
   const request = await axios.get(`${url}?master_category_code=${code}`);
@@ -98,7 +98,7 @@ const PreviewPDF = () => {
   const [isLoadingGeneratePDF, setIsLoadingGeneratePDF] = useState(false);
 
   const { data: dataPreview, mutate: reloadPreview } = useSWR(
-    [`${baseAPIURL}/cv/preview/pdf/${userLogin?.id}`],
+    [`${baseAPIURL}/cv/preview/pdf/user_id/${userLogin?.id}`],
     previewPDFFetcher
   );
 
@@ -112,7 +112,7 @@ const PreviewPDF = () => {
     try {
       setIsLoadingGeneratePDF(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASEAPIURL}/cv/preview/generate_pdf/${userLogin?.id}`
+        `${process.env.NEXT_PUBLIC_BASEAPIURL}/cv/preview/generate_pdf/user_id/${userLogin?.id}`
       );
       const { data: responseData, status } = response;
       const { url_download, filename } = responseData.data;

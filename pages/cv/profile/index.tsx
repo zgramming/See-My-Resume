@@ -41,7 +41,7 @@ const ProfilePage = () => {
     mutate: reloadProfile,
     isValidating,
   } = useSWR(
-    [`${baseAPIURL}/cv/profile/${userLogin?.id ?? 0}`],
+    [`${baseAPIURL}/cv/profile/user_id/${userLogin?.id ?? 0}`],
     profileFetcher
   );
 

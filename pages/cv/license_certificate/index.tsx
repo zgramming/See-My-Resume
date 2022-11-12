@@ -72,7 +72,7 @@ const LicenseCertificatePage = () => {
     mutate: reloadLicenseCertificate,
     isValidating,
   } = useSWR(
-    [`${baseAPIURL}/cv/license_certificate/${userLogin?.id}`],
+    [`${baseAPIURL}/cv/license_certificate/user_id/${userLogin?.id}`],
     licenseCertificateFetcher
   );
 

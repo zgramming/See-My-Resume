@@ -37,7 +37,7 @@ const ContactPage = () => {
     data: dataContact,
     mutate: reloadContact,
     isValidating,
-  } = useSWR([`${baseAPIURL}/cv/contact/${userLogin?.id}`], contactFetcher);
+  } = useSWR([`${baseAPIURL}/cv/contact/user_id/${userLogin?.id}`], contactFetcher);
 
   const dataSource: DataSourceInterface[] =
     dataContact?.map((val, index) => {

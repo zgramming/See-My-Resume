@@ -71,7 +71,7 @@ const ExperiencePage = () => {
   }>();
 
   const { data: dataExperience, mutate: reloadExperience } = useSWR(
-    [`${baseAPIURL}/cv/experience/${userLogin?.id}`],
+    [`${baseAPIURL}/cv/experience/user_id/${userLogin?.id}`],
     experienceFetcher
   );
 

@@ -56,7 +56,7 @@ const SkillPage = () => {
     data: dataSkill,
     mutate: reloadSkill,
     isValidating: isLoadingSkill,
-  } = useSWR([`${baseAPIURL}/cv/skill/${userLogin?.id}`], skillFetcher);
+  } = useSWR([`${baseAPIURL}/cv/skill/user_id/${userLogin?.id}`], skillFetcher);
 
   const { data: dataMasterLevel, isValidating: isLoadingMasterLevel } = useSWR(
     [`${baseAPIURL}/setting/master_data`, "LEVEL_SKILL"],

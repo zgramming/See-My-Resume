@@ -71,7 +71,10 @@ const PortfolioPage = () => {
     data: dataPortfolio,
     mutate: reloadPortfolio,
     isValidating,
-  } = useSWR([`${baseAPIURL}/cv/portfolio/${userLogin?.id}`], portfolioFetcher);
+  } = useSWR(
+    [`${baseAPIURL}/cv/portfolio/user_id/${userLogin?.id}`],
+    portfolioFetcher
+  );
 
   const deleteHandler = async (id: string) => {
     Modal.confirm({

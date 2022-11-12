@@ -66,7 +66,7 @@ const EducationPage = () => {
     data: dataEducation,
     mutate: reloadEducation,
     isValidating,
-  } = useSWR([`${baseAPIURL}/cv/education/${userLogin?.id}`], educationFetcher);
+  } = useSWR([`${baseAPIURL}/cv/education/user_id/${userLogin?.id}`], educationFetcher);
 
   const deleteHandler = async (id: string) => {
     Modal.confirm({
