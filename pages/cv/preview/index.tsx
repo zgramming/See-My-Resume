@@ -1,18 +1,51 @@
-import { Button, Card, notification, Select, Space, Spin, Tabs } from "antd";
+import {
+  Button,
+  Card,
+  Form,
+  notification,
+  Select,
+  Space,
+  Spin,
+  Tabs,
+} from "antd";
 import axios from "axios";
 import { saveAs } from "file-saver";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 
 import { BuildFilled, SaveOutlined } from "@ant-design/icons";
 
 import DefaultTemplatePDF from "../../../components/template_pdf/default/default_template_pdf";
 import useUserLogin from "../../../hooks/use_userlogin";
+import { CvTemplatePDFInterface } from "../../../interface/cv/cvtemplate_pdf_interface";
+import { CvTemplateWebsiteInterface } from "../../../interface/cv/cvtemplate_website_interface";
 import { MasterData, Users } from "../../../interface/main_interface";
 import { baseAPIURL } from "../../../utils/constant";
 
-const codeTemplateWebsiteFetcher = async (url: string, code: string) => {
-  const request = await axios.get(`${url}?master_category_code=${code}`);
+const getTemplateWebsiteFetcher = async (url: string) => {
+  const request = await axios.get(`${url}`);
+  const {
+    data,
+    success,
+  }: { data: CvTemplateWebsiteInterface | undefined; success: boolean } =
+    request.data;
+  return data;
+};
+
+const getTemplatePDFFetcher = async (url: string) => {
+  const request = await axios.get(`${url}`);
+  const {
+    data,
+    success,
+  }: { data: CvTemplatePDFInterface | undefined; success: boolean } =
+    request.data;
+  return data;
+};
+
+const masterDataCodeTemplateFetcher = async (url: string, code: string) => {
+  const request = await axios.get(
+    `${url}?master_category_code=${code}&status=active`
+  );
   const {
     data,
     success,
@@ -28,29 +61,101 @@ const previewPDFFetcher = async (url: string) => {
 };
 
 const PreviewWebsite = () => {
+  const [form] = Form.useForm();
+  const user = useUserLogin();
+  const [isLoading, setIsLoading] = useState(false);
+  const [iframeKey, setIframeKey] = useState<string>(
+    new Date().toLocaleDateString()
+  );
+
+  const { data: dataTemplateWebsite, isValidating: reloadTemplateWebsite } =
+    useSWR(
+      [`${baseAPIURL}/cv/preview/website/user_id/${user?.id}`],
+      getTemplateWebsiteFetcher
+    );
+
   const { data: dataCodeTemplate, isValidating: isLoadingCodeTemplate } =
     useSWR(
       [`${baseAPIURL}/setting/master_data`, "KODE_TEMPLATE_WEB"],
-      codeTemplateWebsiteFetcher
+      masterDataCodeTemplateFetcher
     );
 
-  const user = useUserLogin();
+  const onFinish = async () => {
+    try {
+      setIsLoading(true);
+      const values = await form.validateFields();
+      const { data: dataResponse, status } = await axios.post(
+        `${baseAPIURL}/cv/preview/website`,
+        {
+          user_id: user?.id,
+          template_website_id: values.template_website_id,
+        }
+      );
+      const {
+        data,
+        success,
+        message,
+      }: {
+        data?: CvTemplateWebsiteInterface;
+        success: boolean;
+        message?: string;
+      } = dataResponse;
+      setIframeKey(new Date().toLocaleDateString());
+      notification.success({
+        message: "Success",
+        description: message,
+      });
+    } catch (error: any) {
+      notification.error({
+        message: "Error occured",
+        description: error?.message ?? "Unknown Error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (dataTemplateWebsite) {
+      form.setFieldValue(
+        "template_website_id",
+        dataTemplateWebsite?.template_website_id ?? null
+      );
+    }
+    return () => {};
+  }, [dataTemplateWebsite, form]);
 
   return (
-    <div className="flex flex-col space-y-10">
-      <div className="flex flex-row justify-between items-center my-5">
-        <div className="flex flex-wrap items-center space-x-2 ">
-          <div className="flex items-center space-x-3">
-            <div>Pilih Template</div>
+    <Spin spinning={isLoading}>
+      <div className="flex flex-col space-y-10">
+        <div className="flex flex-row justify-end items-center mt-5">
+          <Space>
+            <Button
+              icon={<SaveOutlined />}
+              className="bg-success text-white"
+              form="form_validation_website"
+              htmlType="submit"
+            >
+              Simpan
+            </Button>
+          </Space>
+        </div>
+        <Form
+          form={form}
+          name="form_validation_website"
+          id="form_validation_website"
+          layout="vertical"
+          onFinish={onFinish}
+        >
+          <Form.Item label="Template" name="template_website_id">
             <Select
               className="w-auto md:min-w-[10rem]"
               defaultValue={{
-                value: "",
-                label: "Pilih",
+                value: dataTemplateWebsite?.template_website_id ?? null,
+                label: dataTemplateWebsite?.template_website?.name ?? "Default",
               }}
-              onChange={(value: any) => {}}
             >
-              <Select.Option value={""}>Pilih</Select.Option>
+              <Select.Option value={undefined}>Default</Select.Option>
               {dataCodeTemplate?.map((val, index) => {
                 return (
                   <Select.Option key={val.id} value={val.id}>
@@ -59,60 +164,95 @@ const PreviewWebsite = () => {
                 );
               }) ?? []}
             </Select>
-          </div>
-        </div>
-
-        <Space>
-          <Button
-            icon={<SaveOutlined />}
-            className="bg-success text-white"
-            onClick={() => {}}
-          >
-            Simpan
-          </Button>
-        </Space>
+          </Form.Item>
+          <Form.Item label="Preview Website">
+            <Card
+              bodyStyle={{
+                padding: 0,
+                margin: 0,
+              }}
+              style={{
+                padding: 0,
+                margin: 0,
+              }}
+            >
+              <iframe
+                key={iframeKey}
+                name="Template Website"
+                src={`https://seemycv.my.id/${user?.username}`}
+                className="w-full h-[50rem] border-none shadow-xl"
+              ></iframe>
+            </Card>
+          </Form.Item>
+        </Form>
       </div>
-
-      <Card
-        bodyStyle={{
-          padding: 0,
-          margin: 0,
-        }}
-        style={{
-          padding: 0,
-          margin: 0,
-        }}
-      >
-        <iframe
-          name="Template Website"
-          src={`https://seemycv.my.id/${user?.username}`}
-          className="w-full h-[50rem] border-none shadow-xl"
-        ></iframe>
-      </Card>
-    </div>
+    </Spin>
   );
 };
 
 const PreviewPDF = () => {
-  const userLogin = useUserLogin();
+  const user = useUserLogin();
+  const [form] = Form.useForm();
+
   const [isLoadingGeneratePDF, setIsLoadingGeneratePDF] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: dataPreview, mutate: reloadPreview } = useSWR(
-    [`${baseAPIURL}/cv/preview/pdf/user_id/${userLogin?.id}`],
+    [`${baseAPIURL}/cv/preview/pdf/user_id/${user?.id}/detail`],
     previewPDFFetcher
+  );
+
+  const { data: dataTemplatePDF, isValidating: reloadTemplatePDF } = useSWR(
+    [`${baseAPIURL}/cv/preview/pdf/user_id/${user?.id}`],
+    getTemplatePDFFetcher
   );
 
   const { data: dataCodeTemplate, isValidating: isLoadingCodeTemplate } =
     useSWR(
-      [`${baseAPIURL}/setting/master_data`, "KODE_TEMPLATE_WEB"],
-      codeTemplateWebsiteFetcher
+      [`${baseAPIURL}/setting/master_data`, "KODE_TEMPLATE_PDF"],
+      masterDataCodeTemplateFetcher
     );
+
+  const onFinish = async () => {
+    try {
+      setIsLoading(true);
+      const values = await form.validateFields();
+      const { data: dataResponse, status } = await axios.post(
+        `${baseAPIURL}/cv/preview/pdf`,
+        {
+          user_id: user?.id,
+          template_pdf_id: values.template_pdf_id,
+        }
+      );
+      const {
+        data,
+        success,
+        message,
+      }: {
+        data?: CvTemplatePDFInterface;
+        success: boolean;
+        message?: string;
+      } = dataResponse;
+
+      notification.success({
+        message: "Success",
+        description: message,
+      });
+    } catch (error: any) {
+      notification.error({
+        message: "Error occured",
+        description: error?.message ?? "Unknown Error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const generatePDF = async () => {
     try {
       setIsLoadingGeneratePDF(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASEAPIURL}/cv/preview/generate_pdf/user_id/${userLogin?.id}`
+        `${process.env.NEXT_PUBLIC_BASEAPIURL}/cv/preview/generate_pdf/user_id/${user?.id}`
       );
       const { data: responseData, status } = response;
       const { url_download, filename } = responseData.data;
@@ -132,48 +272,55 @@ const PreviewPDF = () => {
   return (
     <Spin spinning={isLoadingGeneratePDF}>
       <div className="flex flex-col">
-        <div className="flex flex-row justify-between items-center my-5">
-          <div className="flex flex-wrap items-center space-x-2 ">
-            <div className="flex items-center space-x-3">
-              <div>Pilih Template</div>
-              <Select
-                className="w-auto md:min-w-[10rem]"
-                defaultValue={{
-                  value: "",
-                  label: "Pilih",
-                }}
-                onChange={(value: any) => {}}
-              >
-                <Select.Option value={""}>Pilih</Select.Option>
-                {dataCodeTemplate?.map((val, index) => {
-                  return (
-                    <Select.Option key={val.id} value={val.id}>
-                      {val.name}
-                    </Select.Option>
-                  );
-                }) ?? []}
-              </Select>
-            </div>
-          </div>
-
+        <div className="flex flex-row justify-end items-center mt-5">
           <Space>
             <Button
               icon={<BuildFilled />}
               className="bg-info text-white"
               onClick={generatePDF}
+              htmlType="button"
             >
               Generate Template
             </Button>
             <Button
               icon={<SaveOutlined />}
               className="bg-success text-white"
-              onClick={generatePDF}
+              htmlType="submit"
+              form="form_validation_pdf"
             >
               Simpan
             </Button>
           </Space>
         </div>
-        <DefaultTemplatePDF user={dataPreview} isUseShadow />
+        <Form
+          form={form}
+          name="form_validation_pdf"
+          id="form_validation_pdf"
+          layout="vertical"
+          onFinish={onFinish}
+        >
+          <Form.Item label="Template" name="template_pdf_id">
+            <Select
+              className="w-auto md:min-w-[10rem]"
+              defaultValue={{
+                value: dataTemplatePDF?.template_pdf_id ?? null,
+                label: dataTemplatePDF?.template_pdf?.name ?? "Default",
+              }}
+            >
+              <Select.Option value={undefined}>Default</Select.Option>
+              {dataCodeTemplate?.map((val, index) => {
+                return (
+                  <Select.Option key={val.id} value={val.id}>
+                    {val.name}
+                  </Select.Option>
+                );
+              }) ?? []}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Preview PDF">
+            <DefaultTemplatePDF user={dataPreview} isUseShadow />
+          </Form.Item>
+        </Form>
       </div>
     </Spin>
   );
