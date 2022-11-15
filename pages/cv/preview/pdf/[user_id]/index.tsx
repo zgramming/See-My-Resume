@@ -17,7 +17,7 @@ const Page = () => {
   const { query } = useRouter();
   const { user_id } = query;
   const { data: dataPreview, mutate: reloadPreview } = useSWR(
-    [`${baseAPIURL}/cv/preview/pdf/${user_id}`],
+    [`${baseAPIURL}/cv/preview/pdf/user_id/${user_id}`],
     previewPDFFetcher
   );
 

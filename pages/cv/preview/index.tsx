@@ -4,7 +4,7 @@ import { saveAs } from "file-saver";
 import { useState } from "react";
 import useSWR from "swr";
 
-import { SaveOutlined } from "@ant-design/icons";
+import { BuildFilled, SaveOutlined } from "@ant-design/icons";
 
 import DefaultTemplatePDF from "../../../components/template_pdf/default/default_template_pdf";
 import useUserLogin from "../../../hooks/use_userlogin";
@@ -63,13 +63,13 @@ const PreviewWebsite = () => {
         </div>
 
         <Space>
-          {/* <Button
+          <Button
             icon={<SaveOutlined />}
             className="bg-success text-white"
             onClick={() => {}}
           >
             Simpan
-          </Button> */}
+          </Button>
         </Space>
       </div>
 
@@ -158,11 +158,18 @@ const PreviewPDF = () => {
 
           <Space>
             <Button
+              icon={<BuildFilled />}
+              className="bg-info text-white"
+              onClick={generatePDF}
+            >
+              Generate Template
+            </Button>
+            <Button
               icon={<SaveOutlined />}
               className="bg-success text-white"
               onClick={generatePDF}
             >
-              Generate Template
+              Simpan
             </Button>
           </Space>
         </div>

@@ -138,7 +138,7 @@ const CVExperience = (props: { experience?: CVExperienceInterface[] }) => {
         return (
           <div key={val.id} className="flex flex-row space-x-2">
             <div>{index + 1}.</div>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
               <div className="flex flex-row items-center justify-between">
                 <div className="flex flex-col">
                   <div className="font-bold text-base">{val.job}</div>
