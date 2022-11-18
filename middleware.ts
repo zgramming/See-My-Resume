@@ -1,6 +1,6 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 
-import { keyLocalStorageLogin } from "./utils/constant";
+import { keyCookieAuth } from "./utils/constant";
 
 const excludePathCheckingToken = (path: string) => {
   return (
@@ -12,7 +12,7 @@ const excludePathCheckingToken = (path: string) => {
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl.pathname;
-  const accessToken = request.cookies.get(keyLocalStorageLogin);
+  const accessToken = request.cookies.get(keyCookieAuth);
   /// Check apakah url sekarang termaksud kedalam url yang tidak diikut sertakan pengecekan token
   if (excludePathCheckingToken(url)) {
     return NextResponse.next();

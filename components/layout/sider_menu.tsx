@@ -24,7 +24,7 @@ import {
 import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
 import { AppAccessMenu, Users } from "../../interface/main_interface";
-import { baseAPIURL, keyLocalStorageLogin } from "../../utils/constant";
+import { baseAPIURL, keyCookieAuth } from "../../utils/constant";
 import { HandleErrorForm } from "../../utils/error_form";
 
 const accessibleMenuFetcher = async (url: string, route?: any) => {
@@ -67,7 +67,7 @@ const ProfileLogin = (props: { user?: Users }) => {
         message,
         success,
       }: { data: Users; message: string; success: true } = data;
-      setCookie(null, keyLocalStorageLogin, JSON.stringify(dataResponse));
+      setCookie(null, keyCookieAuth, JSON.stringify(dataResponse));
       notification.success({
         message: "Success Update",
         description: message,
@@ -217,8 +217,15 @@ const SiderMenu = (props: {}) => {
         icon={<LogoutOutlined />}
         danger
         onClick={async (e) => {
-          destroyCookie(null, keyLocalStorageLogin);
-          replace("/login");
+          try {
+            destroyCookie({}, keyCookieAuth);
+            replace("/login");
+          } catch (error: any) {
+            notification.error({
+              message: "Error",
+              description: error?.message ?? "Unknown Error Message",
+            });
+          }
         }}
       >
         Logout
