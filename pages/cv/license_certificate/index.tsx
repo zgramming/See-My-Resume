@@ -23,7 +23,7 @@ import {
 import Search from "antd/lib/input/Search";
 import axios from "axios";
 import moment from "moment";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { parse } from "path";
 import { useEffect, useState } from "react";
 import useSWR from "swr";

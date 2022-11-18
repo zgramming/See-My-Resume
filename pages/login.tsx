@@ -1,10 +1,12 @@
-import { Button, Form, Input, notification, Spin } from "antd";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { setCookie } from "nookies";
-import { useState } from "react";
+import { Button, Form, Input, notification, Spin } from 'antd';
+import axios from 'axios';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { setCookie } from 'nookies';
+import { useState } from 'react';
 
-import { baseAPIURL, keyLocalStorageLogin } from "../utils/constant";
+import BG from '../public/images/logo_color.png';
+import { baseAPIURL, keyLocalStorageLogin } from '../utils/constant';
 
 const LoginPage = () => {
   const [form] = Form.useForm();
@@ -46,14 +48,19 @@ const LoginPage = () => {
         <div className="flex flex-col lg:flex-row px-10">
           <div className="bg-white px-10 lg:basis-1/2">
             <div className="text-center">
-              <img
+              {/* <img
                 className="mx-auto w-48"
                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
                 alt="logo"
-              />
-              <h4 className="text-xl font-semibold mt-1 mb-12 pb-1">
-                SeeMyCV Management
-              </h4>
+              /> */}
+              <div className="relative w-96 h-52 mx-auto">
+                <Image
+                  src={BG}
+                  alt="Background Image"
+                  className="shadow rounded"
+                  fill
+                />
+              </div>
             </div>
             <Form
               form={form}
@@ -81,15 +88,18 @@ const LoginPage = () => {
                 name="btn_submit"
                 className="flex flex-col text-center py-5 space-y-5"
               >
-                <Button type="primary" size="large" htmlType="submit" className="w-full">
+                <Button
+                  type="primary"
+                  size="large"
+                  htmlType="submit"
+                  className="w-full"
+                >
                   Login
                 </Button>
               </Form.Item>
             </Form>
           </div>
-          <div className="hidden lg:flex flex-col justify-center items-center rounded-tr-lg rounded-br-lg bg-primary lg:basis-1/2">
-            <h1>DISINI BACKGROUND IMAGE</h1>
-          </div>
+          <div className="hidden lg:flex flex-col justify-center items-center rounded-tr-lg rounded-br-lg bg-primary lg:basis-1/2"></div>
         </div>
       </section>
     </Spin>
