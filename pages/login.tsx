@@ -48,16 +48,11 @@ const LoginPage = () => {
         <div className="flex flex-col lg:flex-row px-10">
           <div className="bg-white px-10 lg:basis-1/2">
             <div className="text-center">
-              {/* <img
-                className="mx-auto w-48"
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/lotus.webp"
-                alt="logo"
-              /> */}
-              <div className="relative w-96 h-52 mx-auto">
+              <div className="relative w-96 h-80 mx-auto">
                 <Image
                   src={BG}
                   alt="Background Image"
-                  className="shadow rounded"
+                  className="rounded"
                   fill
                 />
               </div>

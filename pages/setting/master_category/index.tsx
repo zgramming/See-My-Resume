@@ -107,7 +107,7 @@ const MasterCategoryPage = () => {
               pathname: `/setting/master_category/${val.code}`,
             }}
             className="font-bold text-center"
-          >
+            legacyBehavior>
             {val.master_datas?.length ?? 0}
           </Link>
         );
