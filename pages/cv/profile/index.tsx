@@ -1,29 +1,16 @@
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  notification,
-  Space,
-  Spin,
-  Upload,
-} from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import axios from "axios";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
+import { Button, Card, Form, Input, notification, Space, Spin, Upload } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
+import axios from 'axios';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
-import {
-  FilePdfOutlined,
-  SaveOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { FilePdfOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
 
-import useUserLogin from "../../../hooks/use_userlogin";
-import { Users } from "../../../interface/main_interface";
-import { baseAPIURL } from "../../../utils/constant";
-import { regexPhone } from "../../../utils/regex";
+import useUserLogin from '../../../hooks/use_userlogin';
+import { Users } from '../../../interface/main_interface';
+import { baseAPIURL } from '../../../utils/constant';
+import { regexPhone } from '../../../utils/regex';
 
 const profileFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);
