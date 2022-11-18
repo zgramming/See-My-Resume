@@ -106,10 +106,9 @@ const MasterCategoryPage = () => {
             href={{
               pathname: `/setting/master_category/${val.code}`,
             }}
+            className="font-bold text-center"
           >
-            <a className="font-bold text-center">
-              {val.master_datas?.length ?? 0}
-            </a>
+            {val.master_datas?.length ?? 0}
           </Link>
         );
       },
