@@ -218,8 +218,7 @@ const SiderMenu = (props: {}) => {
         danger
         onClick={async (e) => {
           try {
-            destroyCookie({}, keyCookieAuth);
-            replace("/login");
+            window.open(`${baseAPIURL}/v1/logout`, "_self");
           } catch (error: any) {
             notification.error({
               message: "Error",
