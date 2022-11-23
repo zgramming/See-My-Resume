@@ -174,7 +174,7 @@ const ModulPage = () => {
             >
               <Select.Option value={""}>Pilih</Select.Option>
               <Select.Option value="active">Aktif</Select.Option>
-              <Select.Option value="not_active">Tidak Aktif</Select.Option>
+              <Select.Option value="inactive">Tidak Aktif</Select.Option>
             </Select>
           </div>
           <Table
@@ -305,7 +305,7 @@ const FormModal = (props: {
           <Form.Item label="Status" name="status">
             <Radio.Group>
               <Radio value={"active"}>Aktif</Radio>
-              <Radio value={"not_active"}>Tidak Aktif</Radio>
+              <Radio value={"inactive"}>Tidak Aktif</Radio>
             </Radio.Group>
           </Form.Item>
         </Form>
