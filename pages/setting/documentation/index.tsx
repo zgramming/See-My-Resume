@@ -396,7 +396,7 @@ const FormModal = (props: {
           <Form.Item name="status" label="Status">
             <Radio.Group>
               <Radio value="active">Aktif</Radio>
-              <Radio value="not_active">Tidak Aktif</Radio>
+              <Radio value="inactive">Tidak Aktif</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item label="Image" name="image">
