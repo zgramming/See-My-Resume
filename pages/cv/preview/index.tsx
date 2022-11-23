@@ -100,7 +100,12 @@ const PreviewWebsite = () => {
         success: boolean;
         message?: string;
       } = dataResponse;
-      setIframeKey(new Date().toLocaleDateString());
+      setIframeKey((state) => {
+        return new Date().toLocaleDateString("id-ID", {
+          hour: "numeric",
+          second: "2-digit",
+        });
+      });
       notification.success({
         message: "Success",
         description: message,
@@ -179,7 +184,7 @@ const PreviewWebsite = () => {
               <iframe
                 key={iframeKey}
                 name="Template Website"
-                src={`https://seemycv.my.id/${user?.username}`}
+                src={`${process.env.NEXT_PUBLIC_BASEWEBURL}/${user?.username}`}
                 className="w-full h-[50rem] border-none shadow-xl"
               ></iframe>
             </Card>
