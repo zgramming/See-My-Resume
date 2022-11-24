@@ -5,6 +5,7 @@ export interface CVExperienceInterface {
   users_id: number;
   company: string;
   job: string;
+  location?: string;
   start_date: Date;
   end_date: Date;
   description: string;
