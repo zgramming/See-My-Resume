@@ -40,7 +40,7 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
   return getLayout(
     <>
       <Head>
-        <title>{arrPathname.join(" - ")}</title>
+        <title>{`SeeMyCV - ${arrPathname.join(" - ")}`}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <NextNProgress />
