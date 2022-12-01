@@ -10,15 +10,7 @@ import { PieChartOutlined } from "@ant-design/icons";
 
 import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
-import { AppAccessModul } from "../../interface/main_interface";
-
-const headerFetcher = async (url: string, params?: any) => {
-  const request = await axios.get(`${url}`);
-  const { data, success }: { data: AppAccessModul[]; success: boolean } =
-    request.data;
-
-  return data;
-};
+import { headerMenuFetcher } from "../../utils/fetcher_axios";
 
 const currentPathHeaderHandler = (path: string): string => {
   const [first, second, third] = path
@@ -43,7 +35,7 @@ const HeaderMenu = () => {
         process.env.NEXT_PUBLIC_BASEAPIURL
       }/setting/access_modul/by_user_group/${user?.app_group_user_id ?? 0}`,
     ],
-    headerFetcher,
+    headerMenuFetcher,
     {
       onSuccess: (data, key) => {
         const mapping = data.map((val, index) => {
