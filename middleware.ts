@@ -1,5 +1,4 @@
 import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
-import { Users } from "./interface/main_interface";
 
 import { keyCookieAuth } from "./utils/constant";
 
@@ -25,14 +24,15 @@ export function middleware(request: NextRequest, event: NextFetchEvent) {
       return NextResponse.redirect(new URL("/login", request.url));
     } else {
       try {
-        const user = JSON.parse(accessToken.value) as Users;
-        if (!user.id) {
+        const token = accessToken.value;
+        if (!token) {
           throw new Error("Unauthorized");
         }
+
         return NextResponse.next();
       } catch (error) {
         return NextResponse.redirect(
-          new URL("/login?error=unauthorized", request.url)
+          new URL("/login?error=Unauthorized", request.url)
         );
       }
     }
