@@ -15,10 +15,13 @@ const useUserLogin = () => {
       const cookies = parseCookies();
       const { payload } = jwt.decode(cookies[keyCookieAuth]) as JwtPayload;
       const { user } = payload;
+      if (!user) {
+        throw new Error("Unauthorized");
+      }
       setUser(user);
-    } catch (error) {
+    } catch (error: any) {
       notification.error({
-        message: "Unauthorized",
+        message: error?.message ?? "User Unauthorized",
       });
 
       replace("/login");
