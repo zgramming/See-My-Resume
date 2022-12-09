@@ -320,6 +320,7 @@ const FormModal = (props: {
       start_date:
         props.row?.start_date && moment(new Date(props.row.start_date)),
       end_date: props.row?.end_date && moment(new Date(props.row.end_date)),
+      location: props.row?.location,
       description: props.row?.description,
       is_graduated: props.row?.is_graduated ?? false,
     });
@@ -361,10 +362,13 @@ const FormModal = (props: {
             label="Perusahaan"
             rules={[{ required: true }]}
           >
-            <Input placeholder="Masukkan perusahaan" />
+            <Input placeholder="Masukkan Perusahaan" />
           </Form.Item>
           <Form.Item label="Pekerjaan" name="job" rules={[{ required: true }]}>
-            <Input placeholder="Masukkan pekerjaan" />
+            <Input placeholder="Masukkan Pekerjaan" />
+          </Form.Item>
+          <Form.Item label="Lokasi" name="location">
+            <Input placeholder="Masukkan Lokasi Pekerjaan" />
           </Form.Item>
           <Form.Item
             label="Mulai"
