@@ -59,7 +59,7 @@ const HeaderMenu = () => {
   }, [pathname]);
 
   return (
-    <Header className="bg-white ">
+    <Header className="!bg-white ">
       <Menu
         theme="light"
         mode="horizontal"

@@ -1,4 +1,4 @@
-import "antd/dist/antd.variable.min.css";
+import "antd/dist/reset.css";
 import "../styles/globals.css";
 
 import { ConfigProvider } from "antd";
@@ -7,9 +7,10 @@ import { AppContext, AppInitialProps, AppLayoutProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 
 import AdminLayout from "../components/layout/layout";
+import { primaryColor } from "../utils/constant";
 import { convertRoutePathToArray } from "../utils/function";
 
 const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
@@ -18,20 +19,15 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
 }: AppLayoutProps) => {
   const router = useRouter();
 
+  useEffect(() => {
+    
+    return () => {};
+  }, []);
+
   /// Only get 3 first value from array
   const arrPathname = convertRoutePathToArray(router.asPath)
     .slice(0, 3)
     .map((val) => (val[0]?.toUpperCase() ?? "") + val.slice(1));
-
-  ConfigProvider.config({
-    theme: {
-      primaryColor: process.env["NEXT_PUBLIC_TAILWIND_PRIMARY_COLOR"],
-      errorColor: process.env["NEXT_PUBLIC_TAILWIND_ERROR_COLOR"],
-      infoColor: process.env["NEXT_PUBLIC_TAILWIND_INFO_COLOR"],
-      successColor: process.env["NEXT_PUBLIC_TAILWIND_SUCCESS_COLOR"],
-      warningColor: process.env["NEXT_PUBLIC_TAILWIND_WARNING_COLOR"],
-    },
-  });
 
   const getLayout =
     Component.getLayout ??
@@ -44,7 +40,7 @@ const MyApp: NextComponentType<AppContext, AppInitialProps, AppLayoutProps> = ({
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <NextNProgress />
-      <ConfigProvider>
+      <ConfigProvider theme={{ token: { colorPrimary: primaryColor } }}>
         <Component {...pageProps} />
       </ConfigProvider>
     </>

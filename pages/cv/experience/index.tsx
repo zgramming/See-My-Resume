@@ -18,7 +18,7 @@ import {
 import Search from "antd/lib/input/Search";
 import Upload from "antd/lib/upload";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -318,8 +318,8 @@ const FormModal = (props: {
       company: props.row?.company,
       job: props.row?.job,
       start_date:
-        props.row?.start_date && moment(new Date(props.row.start_date)),
-      end_date: props.row?.end_date && moment(new Date(props.row.end_date)),
+        props.row?.start_date && dayjs(new Date(props.row.start_date)),
+      end_date: props.row?.end_date && dayjs(new Date(props.row.end_date)),
       location: props.row?.location,
       description: props.row?.description,
       is_graduated: props.row?.is_graduated ?? false,

@@ -34,7 +34,7 @@ import { convertObjectIntoQueryParams, sleep } from "../../../utils/function";
 import axios from "axios";
 import { Documentation, MasterData } from "../../../interface/main_interface";
 import useSWR from "swr";
-import moment from "moment";
+import dayjs from "dayjs";
 
 interface DataSourceInterface {
   no: number;
@@ -317,7 +317,7 @@ const FormModal = (props: {
       name: props.row?.name ?? "",
       code: props.row?.code ?? "",
       birth_date:
-        props.row?.birth_date && moment(new Date(props.row.birth_date)),
+        props.row?.birth_date && dayjs(new Date(props.row.birth_date)),
       money: props.row?.money ?? "",
       description: props.row?.description ?? "",
       hobbies: props.row?.hobbies ?? "",

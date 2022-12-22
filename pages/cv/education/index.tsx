@@ -21,7 +21,8 @@ import {
 } from "antd";
 import Search from "antd/lib/input/Search";
 import axios from "axios";
-import moment from "moment";
+import dayjs from "dayjs";
+
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -291,8 +292,8 @@ const FormModal = (props: {
       major: props.row?.major,
       field_of_study: props.row?.field_of_study,
       start_date:
-        props.row?.start_date && moment(new Date(props.row?.start_date)),
-      end_date: props.row?.end_date && moment(new Date(props.row?.end_date)),
+        props.row?.start_date && dayjs(new Date(props.row?.start_date)),
+      end_date: props.row?.end_date && dayjs(new Date(props.row?.end_date)),
     });
     return () => {};
   }, [form, props.row]);
