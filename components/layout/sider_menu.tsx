@@ -11,7 +11,7 @@ import {
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { destroyCookie, setCookie } from "nookies";
+import { setCookie } from "nookies";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 
@@ -23,17 +23,10 @@ import {
 
 import useUserLogin from "../../hooks/use_userlogin";
 import { getItem } from "../../interface/layout/menu_items_interface";
-import { AppAccessMenu, Users } from "../../interface/main_interface";
+import { Users } from "../../interface/main_interface";
 import { baseAPIURL, keyCookieAuth } from "../../utils/constant";
 import { HandleErrorForm } from "../../utils/error_form";
-
-const accessibleMenuFetcher = async (url: string, route?: any) => {
-  const request = await axios.get(`${url}`, { params: { route } });
-  const { data, success }: { data: AppAccessMenu[]; success: boolean } =
-    request.data;
-
-  return data;
-};
+import { accessibleMenuFetcher } from "../../utils/fetcher_axios";
 
 const currentPathHandler = (path: string): string => {
   const [first, second, third] = path
@@ -44,30 +37,33 @@ const currentPathHandler = (path: string): string => {
   return !third ? `/${first}/${second}` : `/${first}/${second}/${third}`;
 };
 
-const ProfileLogin = (props: { user?: Users }) => {
+const ProfileLogin = () => {
+  const user = useUserLogin();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
     form.setFieldsValue({
-      name: props.user?.name,
+      name: user?.name,
     });
     return () => {};
-  }, [form, props.user]);
+  }, [form, user]);
 
   const onFinish = async (val: any) => {
     try {
       const { name } = await form.validateFields();
       const { data, status } = await axios.put(
-        `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/user/update_name/${props.user?.id}`,
+        `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/user/update_name/${user?.id}`,
         { name }
       );
       const {
         data: dataResponse,
         message,
         success,
-      }: { data: Users; message: string; success: true } = data;
-      setCookie(null, keyCookieAuth, JSON.stringify(dataResponse));
+        token,
+      }: { data: Users; message: string; success: true; token: string } = data;
+      setCookie(null, keyCookieAuth, token);
       notification.success({
         message: "Success Update",
         description: message,
@@ -88,8 +84,8 @@ const ProfileLogin = (props: { user?: Users }) => {
         }}
       >
         <div className="flex flex-col items-center justify-center p-2 font-bold">
-          <div className="">{props.user?.name}</div>
-          <div className="font-thin">{props.user?.email}</div>
+          <div className="">{user?.name}</div>
+          <div className="font-thin">{user?.email}</div>
           <Button
             type="primary"
             icon={<EditOutlined />}
@@ -209,7 +205,7 @@ const SiderMenu = (props: {}) => {
           push(path);
         }}
       />
-      <ProfileLogin user={user} />
+      <ProfileLogin />
       <Button
         type="primary"
         htmlType="button"
