@@ -13,14 +13,14 @@ import {
   TableColumnsType,
 } from "antd";
 import Search from "antd/lib/input/Search";
+import axios from "axios";
 import { useEffect, useState } from "react";
+import useSWR from "swr";
 
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { convertObjectIntoQueryParams, sleep } from "../../../utils/function";
 import { Parameter } from "../../../interface/main_interface";
-import axios from "axios";
-import useSWR from "swr";
+import { convertObjectIntoQueryParams, sleep } from "../../../utils/function";
 
 interface DataSourceInterface {
   no: number;
@@ -33,7 +33,7 @@ interface DataSourceInterface {
   action: Parameter;
 }
 
-const parameterFetcher = async (url: string, params: any) => {
+const parameterFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: Parameter[]; success: boolean } =

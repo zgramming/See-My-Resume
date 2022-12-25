@@ -52,7 +52,7 @@ interface DataSourceInterface {
   action: Documentation;
 }
 
-const documentationFetcher = async (url: string, params: any) => {
+const documentationFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: Documentation[]; success: boolean } =
@@ -60,7 +60,7 @@ const documentationFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const masterDataJobFetcher = async (url: string, code: string) => {
+const masterDataJobFetcher = async ([url, code]: any) => {
   const request = await axios.get(`${url}?master_category_code=${code}`);
   const { data, success }: { data: MasterData[]; success: boolean } =
     request.data;

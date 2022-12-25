@@ -1,27 +1,17 @@
 import {
-  Button,
-  Card,
-  Form,
-  Input,
-  Modal,
-  notification,
-  Radio,
-  Select,
-  Space,
-  Spin,
-  Table,
-  TableColumnsType,
-} from "antd";
-import Search from "antd/lib/input/Search";
-import { useEffect, useState } from "react";
+    Button, Card, Form, Input, Modal, notification, Radio, Select, Space, Spin, Table,
+    TableColumnsType
+} from 'antd';
+import Search from 'antd/lib/input/Search';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { AppGroupUser, Users } from "../../../interface/main_interface";
-import useSWR from "swr";
-import axios from "axios";
-import { convertObjectIntoQueryParams } from "../../../utils/function";
-  
+import { AppGroupUser, Users } from '../../../interface/main_interface';
+import { userFetcher } from '../../../utils/fetcher_axios';
+
 interface DataSourceInterface {
   no: number;
   group_user: Users;
@@ -32,13 +22,6 @@ interface DataSourceInterface {
   updated_at: string;
   action: Users;
 }
-
-const userFetcher = async (url: string, params: any) => {
-  const queryParam = convertObjectIntoQueryParams(params);
-  const request = await axios.get(`${url}${queryParam}`);
-  const { data, success }: { data: Users[]; success: boolean } = request.data;
-  return data;
-};
 
 const userGroupFetcher = async (url: string) => {
   const request = await axios.get(`${url}`);

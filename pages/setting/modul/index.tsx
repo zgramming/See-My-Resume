@@ -21,7 +21,7 @@ import useSWR from "swr";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { AppModul } from "../../../interface/main_interface";
-import { convertObjectIntoQueryParams } from "../../../utils/function";
+import { modulFetcher } from "../../../utils/fetcher_axios";
 
 interface DataSourceInterface {
   no: number;
@@ -34,14 +34,6 @@ interface DataSourceInterface {
   updated_at: string;
   action: AppModul;
 }
-
-const modulFetcher = async (url: string, params: any) => {
-  const queryParam = convertObjectIntoQueryParams(params);
-  const request = await axios.get(`${url}${queryParam}`);
-  const { data, success }: { data: AppModul[]; success: boolean } =
-    request.data;
-  return data;
-};
 
 const ApiURL = `${process.env.NEXT_PUBLIC_BASEAPIURL}/setting/modul`;
 

@@ -37,7 +37,7 @@ interface DataSourceInterface {
   action: AppGroupUser;
 }
 
-const userGroupFetcher = async (url: string, params: any) => {
+const userGroupFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppGroupUser[]; success: boolean } =
@@ -45,7 +45,7 @@ const userGroupFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const accessibleModulFetcher = async (url: string, params: any) => {
+const accessibleModulFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppAccessModul[]; success: boolean } =
@@ -53,7 +53,7 @@ const accessibleModulFetcher = async (url: string, params: any) => {
   return data ?? [];
 };
 
-const accessMenuFetcher = async (url: string, groupUserId: any) => {
+const accessMenuFetcher = async ([url, groupUserId]: any) => {
   const request = await axios.get(`${url}`);
   const { data, success }: { data: AppAccessMenu[]; success: boolean } =
     request.data;

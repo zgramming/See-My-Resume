@@ -36,7 +36,7 @@ interface DataSourceInterface {
   action: MasterCategory;
 }
 
-const masterCategoryFetcher = async (url: string, params: any) => {
+const masterCategoryFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: MasterCategory[]; success: boolean } =
@@ -107,7 +107,8 @@ const MasterCategoryPage = () => {
               pathname: `/setting/master_category/${val.code}`,
             }}
             className="font-bold text-center"
-            legacyBehavior>
+            legacyBehavior
+          >
             {val.master_datas?.length ?? 0}
           </Link>
         );
