@@ -13,18 +13,18 @@ import {
   TableColumnsType,
 } from "antd";
 import Search from "antd/lib/input/Search";
-import { useEffect, useState } from "react";
-
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-
-import { convertObjectIntoQueryParams, sleep } from "../../../utils/function";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
+
+import { EditOutlined } from "@ant-design/icons";
+
 import {
   AppAccessModul,
   AppGroupUser,
   AppModul,
 } from "../../../interface/main_interface";
+import { convertObjectIntoQueryParams } from "../../../utils/function";
 
 interface DataSourceInterface {
   no: number;
@@ -36,7 +36,7 @@ interface DataSourceInterface {
   action: AppGroupUser;
 }
 
-const userGroupFetcher = async (url: string, params: any) => {
+const userGroupFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppGroupUser[]; success: boolean } =
@@ -44,7 +44,7 @@ const userGroupFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const modulFetcher = async (url: string, params: any) => {
+const modulFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppModul[]; success: boolean } =
@@ -52,7 +52,7 @@ const modulFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const accessModulFetcher = async (url: string, groupUserId?: number) => {
+const accessModulFetcher = async ([url, groupUserId]: any) => {
   const request = await axios.get(`${url}?app_group_user_id=${groupUserId}`);
   const { data, success }: { data: AppAccessModul[]; success: boolean } =
     request.data;

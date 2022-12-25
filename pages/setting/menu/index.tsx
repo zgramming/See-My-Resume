@@ -37,7 +37,7 @@ interface DataSourceInterface {
   action: AppMenu;
 }
 
-const modulFetcher = async (url: string, params: any) => {
+const modulFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppModul[]; success: boolean } =
@@ -45,7 +45,7 @@ const modulFetcher = async (url: string, params: any) => {
   return data;
 };
 
-const menuFetcher = async (url: string, params: any) => {
+const menuFetcher = async ([url, params]: any) => {
   const queryParam = convertObjectIntoQueryParams(params);
   const request = await axios.get(`${url}${queryParam}`);
   const { data, success }: { data: AppMenu[]; success: boolean } = request.data;
