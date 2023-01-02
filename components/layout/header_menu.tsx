@@ -1,7 +1,6 @@
 import { Menu, notification } from "antd";
 import { Header } from "antd/lib/layout/layout";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
